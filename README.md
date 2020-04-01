@@ -18,15 +18,15 @@ University project at FIIT STU, Bratislava, Slovakia.
 
 AVL tree, where AVL stands for its creators - *Adelson-Velsky and Landis*, is a self balancing binary search tree. It is worth noting that it was the first such tree to be invented.
 
-AVL tree has $O(logn)$ time complexity for its operations. It is often compared to *red-black* tree due to them both being height balanced.
+AVL tree has `O(logn)` time complexity for its operations. It is often compared to *red-black* tree due to them both being height balanced.
 
 Each node in AVL tree has a *balance factor*, which is calculated by substracting the height of the left subtree from the height of the right subtree. I.e.:
 
-$B(N) = H(R(N)) - H(L(N))$,
+`B(N) = H(R(N)) - H(L(N))`,
 
-where $B(N)$ is balance factor of the node $N$, $R(N)$ is the right subtree of the node $N$, $L(N)$ is the left subtree of the node $N$, and $H(T)$ is a function to calculate height of the subtree $T$.
+where `B(N)` is balance factor of the node `N`, `R(N)` is the right subtree of the node `N`, `L(N)` is the left subtree of the node `N`, and `H(T)` is a function to calculate height of the subtree `T`.
 
-Binary search tree is defined as an AVL tree, if and only if, each node of the tree has balance factor of **0**, **1**, or **-1**. Node $N$ with balance factor of **-1** is *left heavy*, node $N$ with balance factor of **1** is *right heavy*, node $N$ with balance factor of **0** is *balanced*.
+Binary search tree is defined as an AVL tree, if and only if, each node of the tree has balance factor of **0**, **1**, or **-1**. Node `N` with balance factor of **-1** is *left heavy*, node `N` with balance factor of **1** is *right heavy*, node `N` with balance factor of **0** is *balanced*.
 
 ### Implementation
 
