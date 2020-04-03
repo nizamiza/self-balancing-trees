@@ -17,8 +17,12 @@
 #define NODE_FOUND_MSG	"Node found"
 #define NODE_NFOUND_MSG	"Node not found"
 
+#define ENOMEM "Insufficent memory, cannot allocate node"
+#define ENONODE "Node is NULL, nothing to print"
+#define EDUPNODE "Duplicate node insertion. Operation rejected"
+
 #define EXIT_FUNC 		(printf(CLR_BLUE "--Exiting %s\n" CLR_RESET, __func__))
-#define throw(error) 	(printf(CLR_RED "--%s" CLR_YELLOW " for %s\n" CLR_RESET, error, __func__))
+#define throw(error) 	(printf(CLR_RED "--Error: %s--" CLR_YELLOW " in %s\n" CLR_RESET, error, __func__))
 
 #define msg(...)		(printf(__VA_ARGS__))
 
