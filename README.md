@@ -25,6 +25,7 @@ Binary search tree is defined as an AVL tree, if and only if, each node of the t
 
 ## Implementation
 
+This implementation includes only *search* and *insert* operations.
 For each node we can define a structure:
 
 ```
@@ -116,6 +117,8 @@ struct _node *rebalance(struct _node *node, long key)
 2-3 trees are always balanced and the logic behind it is quite beautiful.
 
 ## Implementation
+
+This implementation includes only *search* and *insert* operations.
 
 # Comparison
 
