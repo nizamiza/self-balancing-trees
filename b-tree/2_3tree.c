@@ -12,7 +12,6 @@
 
 #define ORDER 3
 #define INDENT_INC 4
-#define ENONODE "\n--Error: NULL pointer to node, nothing to print...\n"
 
 #define __indent(current) ((current) + INDENT_INC)
 
@@ -41,8 +40,10 @@ static inline struct _node *_node(struct _node init)
 {
 	struct _node *node = (struct _node *) malloc(sizeof(struct _node));
 
-	if (!node)
+	if (!node) {
+		throw(ENOMEM);
 		return NULL;
+	}
 
 	if (init.left)
 		init.left->parent = node;
@@ -90,7 +91,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	if (!node->parent) {
 		
 		left->parent = middle->parent = node;
-
+		
 		return _update_node(node, (struct _node) {
 			.isfull 	= false,
 			.low_key 	= prom_key,
@@ -125,14 +126,14 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	int merge_prom_key;
 	struct _node *parent_left, *parent_middle;
 
-	if (prom_key <= parent->low_key) {
+	if (prom_key < parent->low_key) {
 
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= prom_key,
 			.left 		= left,
 			.middle 	= middle,
-			.parent 	= parent
+			.parent 	= parent->parent
 		});
 
 		parent_middle = _node((struct _node) {
@@ -140,19 +141,19 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 			.low_key 	= parent->high_key,
 			.left 		= parent->middle,
 			.middle 	= parent->right,
-			.parent 	= parent
+			.parent 	= parent->parent
 		});
 
 		merge_prom_key = parent->low_key;
 		
-	} else if (prom_key >= parent->high_key) {
+	} else if (prom_key > parent->high_key) {
 
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= parent->low_key,
 			.left 		= parent->left,
 			.middle 	= parent->middle,
-			.parent 	= parent
+			.parent 	= parent->parent
 		});
 
 		parent_middle = _node((struct _node) {
@@ -160,7 +161,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 			.low_key 	= prom_key,
 			.left 		= left,
 			.middle 	= middle,
-			.parent 	= parent
+			.parent 	= parent->parent
 		});
 
 		merge_prom_key = parent->high_key;
@@ -172,7 +173,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 			.low_key 	= parent->low_key,
 			.left 		= parent->left,
 			.middle 	= left,
-			.parent 	= parent
+			.parent 	= parent->parent
 		});
 
 		parent_middle = _node((struct _node) {
@@ -180,7 +181,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 			.low_key 	= parent->high_key,
 			.left 		= middle,
 			.middle 	= parent->right,
-			.parent 	= parent
+			.parent 	= parent->parent
 		});
 
 		merge_prom_key = prom_key;
@@ -196,6 +197,11 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 
 static inline struct _node *_split(struct _node *node, int key)
 {
+	if (key == node->low_key || key == node->high_key) {
+		throw(EDUPNODE);
+		return node;
+	}
+
 	int *keys = _sort_keys(node->low_key, node->high_key, key);
 	int prom_key = keys[1];
 
@@ -225,6 +231,11 @@ static inline struct _node *_split(struct _node *node, int key)
 
 static inline struct _node *_add_key(struct _node *node, int key)
 {
+	if (key == node->low_key) {
+		throw(EDUPNODE);
+		return node;
+	}
+
 	if (node->low_key < key) {
 		node->high_key = key;
 	} else {
@@ -235,14 +246,8 @@ static inline struct _node *_add_key(struct _node *node, int key)
 	return (node->isfull = true, node);
 }
 
-static inline struct _node *_insert_key(struct _node *node, int key)
+static inline struct _node *_get_root(struct _node *node)
 {
-	if (node->isfull) {
-		node = _split(node, key);
-	} else {
-		node = _add_key(node, key);
-	}
-		
 	if (!node->parent)
 		return node;
 
@@ -254,6 +259,17 @@ static inline struct _node *_insert_key(struct _node *node, int key)
 	return current;
 }
 
+static inline struct _node *_insert_key(struct _node *node, int key)
+{
+	if (node->isfull) {
+		node = _split(node, key);
+	} else {
+		node = _add_key(node, key);
+	}
+		
+	return _get_root(node);
+}
+
 struct _node *search(struct _node *node, int key)
 {
 	if (!node)
@@ -262,10 +278,10 @@ struct _node *search(struct _node *node, int key)
 	if (key == node->low_key || key == node->high_key)
 		return node;
 
-	if (key <= node->low_key)
+	if (key < node->low_key)
 		return search(node->left, key);
 
-	if (key >= node->high_key)
+	if (key > node->high_key)
 		return search(node->right, key);
 
 	return search(node->middle, key);
@@ -283,11 +299,16 @@ struct _node *insert(struct _node *node, int key)
 	if (!node->left)
 		return _insert_key(node, key);
 
-	if (key <= node->low_key)
+	if (key < node->low_key)
 		return insert(node->left, key);
 
-	if (node->right && key >= node->high_key)
+	if (node->right && key > node->high_key)
 		return insert(node->right, key);
+
+	if (key == node->low_key || key == node->high_key) {
+		throw(EDUPNODE);
+		return _get_root(node);
+	}
 
 	return insert(node->middle, key);
 }
