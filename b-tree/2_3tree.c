@@ -16,10 +16,10 @@
 #define __ASSIGN_SORTED_KEYS(a, b, c) (arr[0] = a, arr[1] = b, arr[2] = c)
 
 #define __DESTRUCT_MERGE_ARGS__					\
-	struct _node *node 		= args.node;		\
-	struct _node *left 		= args.left;		\
-	struct _node *middle 	= args.middle;		\
-	int prom_key 			= args.prom_key;	\
+	struct _node *node		= args.node;		\
+	struct _node *left		= args.left;		\
+	struct _node *middle	= args.middle;		\
+	int prom_key			= args.prom_key;	\
 
 struct _node {
 	bool isfull;
@@ -87,9 +87,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	__DESTRUCT_MERGE_ARGS__;
 
 	if (!node->parent) {
-		
 		left->parent = middle->parent = node;
-		
 		return _update_node(node, (struct _node) {
 			.isfull 	= false,
 			.low_key 	= prom_key,
@@ -101,7 +99,6 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	struct _node *parent = node->parent;
 
 	if (!parent->isfull) {
-
 		if (parent->low_key < prom_key) {
 			parent->high_key = prom_key;
 			parent->middle = left;
@@ -125,7 +122,6 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	struct _node *parent_left, *parent_middle;
 
 	if (prom_key < parent->low_key) {
-
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= prom_key,
@@ -143,9 +139,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 		});
 
 		merge_prom_key = parent->low_key;
-		
 	} else if (prom_key > parent->high_key) {
-
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= parent->low_key,
@@ -163,9 +157,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 		});
 
 		merge_prom_key = parent->high_key;
-
 	} else {
-
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= parent->low_key,
@@ -253,7 +245,6 @@ static inline struct _node *_get_root(struct _node *node)
 
 	while (current->parent)
 		current = current->parent;
-
 	return current;
 }
 
