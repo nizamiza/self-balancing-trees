@@ -1,6 +1,8 @@
 #ifndef TREEIO_H
 #define TREEIO_H
 
+#include <stdio.h>
+
 #define CLR_RED     "\x1b[31m"
 #define CLR_GREEN   "\x1b[32m"
 #define CLR_YELLOW  "\x1b[33m"
@@ -25,5 +27,11 @@
 #define throw(error) 	(printf(CLR_RED "--Error: %s--" CLR_YELLOW " in %s\n" CLR_RESET, error, __func__))
 
 #define msg(...)		(printf(__VA_ARGS__))
+
+#define putws(n) {		\
+	typeof(n) _n = n;	\
+	while (_n-- > 0)	\
+		putchar(' ');	\
+}
 
 #endif
