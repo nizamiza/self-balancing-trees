@@ -1,22 +1,17 @@
-# Self Balancing Trees
-
-University project at FIIT STU, Bratislava, Slovakia.
-
-- [Self Balancing Trees](#self-balancing-trees)
-	- [**AVL Tree**](#avl-tree)
-		- [Introduction](#introduction)
-		- [Implementation](#implementation)
-	- [**2-3 tree**](#2-3-tree)
-		- [Introduction](#introduction-1)
-		- [Implementation](#implementation-1)
-	- [**Comparison**](#comparison)
-	- [**References**](#references)
+- [AVL Tree](#avl-tree)
+	- [Introduction](#introduction)
+	- [Implementation](#implementation)
+- [2-3 tree](#2-3-tree)
+	- [Introduction](#introduction-1)
+	- [Implementation](#implementation-1)
+- [Comparison](#comparison)
+- [References](#references)
    
 
-## **AVL Tree**
-### Introduction
+# AVL Tree
+## Introduction
 
-AVL tree, where AVL stands for its creators - *Adelson-Velsky and Landis*, is a self balancing binary search tree. It is worth noting that it was the first such tree to be invented.
+AVL tree, where AVL stands for its creators - *Adelson-Velsky and Landis*, is a self balancing binary search tree. It is was the first such tree to be invented.
 
 AVL tree has `O(logn)` time complexity for its operations. It is often compared to *red-black* tree due to them both being height balanced.
 
@@ -28,7 +23,7 @@ where `B(N)` is balance factor of the node `N`, `R(N)` is the right subtree of t
 
 Binary search tree is defined as an AVL tree, if and only if, each node of the tree has balance factor of **0**, **1**, or **-1**. Node `N` with balance factor of **-1** is *left heavy*, node `N` with balance factor of **1** is *right heavy*, node `N` with balance factor of **0** is *balanced*.
 
-### Implementation
+## Implementation
 
 For each node we can define a structure:
 
@@ -43,7 +38,7 @@ struct _node {
 
 where `bfactor` stands for *balance factor*.
 
-Insertion operation of the AVL tree is similar to one of regular binary search tree. Simple recursive traversal will do the trick. Important bit comes after the fact of insertion, which is rebalancing tree.
+Insertion operation of the AVL tree is similar to one of regular binary search tree. Simple recursive traversal will do the trick. Important bit comes after the fact of insertion, which is the rebalancing of tree.
 
 Each time we insert a new node, we calculate balance factor of that node, and if it is not **-1**, **0**, or **1**, then we need to rebalance our tree. This can be done with node rotation operations, such as *left rotation*, and *right rotation*.
 
@@ -77,8 +72,14 @@ struct _node *rotate_right(struct _node *node)
 }
 ```
 
-With these operations, we can define rebalancing routine as follows:
+When new node is inserted to AVL tree, there are [4 cases][1]:
 
+1. Left left case.
+2. Left Right case.
+3. Right Right case.
+4. Right Left case.
+
+Based on these cases, we can define rebalancing routine as follows:
 ```
 struct _node *rebalance(struct _node *node, long key)
 {
@@ -107,10 +108,21 @@ struct _node *rebalance(struct _node *node, long key)
 }
 ```
 
-## **2-3 tree**
-### Introduction
-### Implementation
+# 2-3 tree
+## Introduction
 
-## **Comparison**
+2-3 tree is a self-balancing search tree, where each node (ofter referred as internal node) has either *2 children* and *1 key* or *three children* and *2 keys*.
 
-## **References**
+2-3 trees are always balanced and the logic behind it is quite beautiful.
+
+## Implementation
+
+# Comparison
+
+# References
+
+* [www.geeksforgeeks.org, AVL Tree | Set 1 (Insertion)][1]
+
+[1]: https://www.geeksforgeeks.org/avl-tree-set-1-insertion/
+
+2020, FIIT STU, Bratislava, Slovakia.
