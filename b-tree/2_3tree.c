@@ -275,13 +275,13 @@ struct _node *search(struct _node *node, int key)
 	if (!node)
 		return NULL;
 
-	if (key == node->low_key || key == node->high_key)
+	if (key == node->low_key || (node->isfull && key == node->high_key))
 		return node;
 
 	if (key < node->low_key)
 		return search(node->left, key);
 
-	if (key > node->high_key)
+	if (node->right && key > node->high_key)
 		return search(node->right, key);
 
 	return search(node->middle, key);
