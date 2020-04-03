@@ -11,6 +11,9 @@
 #define ORDER 3
 #define INDENT_INC 8
 
+#define ENONODE "\n--Error: NULL pointer to node, nothing to print...\n"
+
+#define __indent(current, shift) ((current) + (shift) + INDENT_INC)
 #define __make_array(a, b, c) ((typeof(a)) { (a), (b), (c) })
 
 #define __sort_keys(a, b, c) (										\
@@ -21,11 +24,11 @@
 	((c) <= (a)) ? __make_array(c, a, b) : __make_array(c, b, a)	\
 )
 
-#define __destruct_merge_args__(args)			\
-	struct _node *node 		= (args).node;		\
-	struct _node *left 		= (args).left;		\
-	struct _node *middle 	= (args).middle;	\
-	int prom_key 			= (args).prom_key;	\
+#define __DESTRUCT_MERGE_ARGS__					\
+	struct _node *node 		= args.node;		\
+	struct _node *left 		= args.left;		\
+	struct _node *middle 	= args.middle;		\
+	int prom_key 			= args.prom_key;	\
 
 struct _node {
 	bool isfull;
@@ -50,9 +53,9 @@ static inline struct _node *_node(struct _node init)
 	return (*node = init, node);
 }
 
-static inline struct _node *_merge_with_parent(struct _merge_args args)
+static struct _node *_merge_with_parent(struct _merge_args args)
 {
-	__destruct_merge_args__(args);
+	__DESTRUCT_MERGE_ARGS__;
 
 	if (!node->parent) {
 		
@@ -199,12 +202,6 @@ static inline struct _node *_insert_key(struct _node *node, int key)
 	return (node->isfull = true, node);
 }
 
-static inline struct _node *_merge(struct _node *node, int key)
-{
-	if (!node->parent)
-		return node;
-}
-
 struct _node *search(struct _node *node, int key)
 {
 	if (!node)
@@ -237,68 +234,61 @@ struct _node *insert(struct _node *node, int key)
 	if (key <= node->low_key)
 		return insert(node->left, key);
 
-	if (key > node->low_key && key < node->high_key)
-		return insert(node->middle, key);
+	if (key >= node->high_key)
+		return insert(node->right, key);
 
-	return insert(node->right, key);
+	return insert(node->middle, key);
 }
 
+/* Printing logic */
+static inline int dcount(int n)
+{
+	int count = 0;
 
+	while (n / 10) count++;
+	return count;
+}
 
+void print_node(const struct _node *node)
+{
+	if (!node) {
+		printf(ENONODE);
+		return;
+	}
 
+	if (node->isfull) {
+		printf("[%d %d]\n", node->low_key, node->high_key);
+	} else {
+		printf("[%d]\n", node->low_key);
+	}
+}
 
+void print(const struct _node *node, int indent)
+{
+	if (!node)
+		return;
 
+	int i, indent_shift = 0;
 
+	for (i = 0; i < indent; i++)
+		putchar(' ');
 
+	printf("|--[");
 
+	if (node->isfull) {
+		printf("[%d %d]\n", node->low_key, node->high_key);
+		indent_shift += dcount(node->low_key) + dcount(node->high_key) + 1;
+	} else {
+		printf("[%d]\n", node->low_key);
+		indent_shift += dcount(node->low_key);	
+	}
 
+	printf("]--|\n");
 
-
-// void print_node(const struct _node *node)
-// {
-// 	if (!node)
-// 		return;
-
-// 	for (int i = 0; i < node->keys_count; i++)
-// 		printf("[%d] ", node->keys[i]);
-// 	printf("\n");
-// }
-
-// static inline int dcount(int n)
-// {
-// 	int count = 0;
-
-// 	while (n / 10)
-// 		count++;
-
-// 	return count;
-// }
-
-// void print(const struct _node *node, int indent)
-// {
-// 	if (!node)
-// 		return;
-
-// 	int i, indent_shift = 0;
-
-// 	for (i = 0; i < indent; i++)
-// 		putchar(' ');
-
-// 	printf("|--[");
-
-// 	for (i = 0; i < node->keys_count; i++) {
-
-// 		printf("%d", node->keys[i]);
-		
-// 		if (i < node->keys_count - 1)
-// 			putchar(' ');
-
-// 		indent_shift += dcount(node->keys[i]);
-// 	}
-
-// 	indent_shift += node->keys_count - 1;
-// 	printf("]--|\n");
-
-// 	for (i = 0; i < node->children_count; i++)
-// 		print(node->children[i], indent + indent_shift + INDENT_INC);
-// }
+	if (node->isfull) {
+		print(node->left, __indent(indent, indent_shift));
+		print(node->middle, __indent(indent, indent_shift));
+	} else {
+		print(node->left, __indent(indent, indent_shift));
+	}
+}
