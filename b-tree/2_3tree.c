@@ -14,15 +14,8 @@
 #define ENONODE "\n--Error: NULL pointer to node, nothing to print...\n"
 
 #define __indent(current, shift) ((current) + (shift) + INDENT_INC)
-#define __make_array(a, b, c) ((typeof(a)) { (a), (b), (c) })
 
-#define __sort_keys(a, b, c) (										\
-	((a) <= (b) && (b) <= (c)) 	? __make_array(a, b, c) :			\
-	((a) <= (c) && (c) < (b)) 	? __make_array(a, c, b) : 			\
-	((b) <= (a) && (a) < (c)) 	? __make_array(b, a, c) : 			\
-	((b) <= (c) && (c) < (a)) 	? __make_array(b, c, a) : 			\
-	((c) <= (a)) ? __make_array(c, a, b) : __make_array(c, b, a)	\
-)
+#define __ASSIGN_SORTED_KEYS(a, b, c) (arr[0] = a, arr[1] = b, arr[2] = c)
 
 #define __DESTRUCT_MERGE_ARGS__					\
 	struct _node *node 		= args.node;		\
@@ -45,12 +38,35 @@ struct _merge_args {
 
 static inline struct _node *_node(struct _node init)
 {
+	int arr[3] = { (5 > 7 ? 1, 2, 3 : 3, 2, 1) }; 
 	struct _node *node = (struct _node *) malloc(sizeof(struct _node));
 
 	if (!node)
 		return NULL;
 
 	return (*node = init, node);
+}
+
+static inline int *_sort_keys(int a, int b, int c)
+{
+	int *arr = (int *) calloc(ORDER, sizeof(int));
+
+	if (a <= b && b <= c)
+		return (__ASSIGN_SORTED_KEYS(a, b, c), arr);
+
+	if (a <= c && c < b)
+		return (__ASSIGN_SORTED_KEYS(a, c, b), arr);
+
+	if (b <= a && a < c)
+		return (__ASSIGN_SORTED_KEYS(b, a, c), arr);
+
+	if (b <= c && c < a)
+		return (__ASSIGN_SORTED_KEYS(b, c, a), arr);
+
+	if (c <= a)
+		return (__ASSIGN_SORTED_KEYS(c, a, b), arr);
+
+	return (__ASSIGN_SORTED_KEYS(c, b, a), arr);
 }
 
 static struct _node *_merge_with_parent(struct _merge_args args)
@@ -164,7 +180,10 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 
 static inline struct _node *_split(struct _node *node, int key)
 {
-	int keys[] = __sort_keys(node->low_key, node->high_key, key);
+
+	int *keys = _sort_keys(node->low_key, node->high_key, key);
+	int prom_key = keys[1];
+
 	struct _node *left, *middle;
 
 	left = _node((struct _node) {
@@ -179,11 +198,13 @@ static inline struct _node *_split(struct _node *node, int key)
 		.parent 	= node->parent
 	});
 
+	free(keys);
+
 	return _merge_with_parent((struct _merge_args) {
 		.node 		= node,
 		.left 		= left,
 		.middle 	= middle,
-		.prom_key 	= keys[1]
+		.prom_key 	= prom_key
 	});
 }
 
