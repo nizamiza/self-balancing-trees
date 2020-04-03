@@ -11,17 +11,17 @@ static inline void exit_program(int code)
 
 static inline void insert_nodes(Node *root)
 {
-	long key;
+	int key;
 
-	while (scanf("%ld", &key) == 1)
+	while (scanf("%d", &key) == 1)
 		*root = insert(*root, key);
 }
 
 static inline void search_node(Node root)
 {
-	long key;
+	int key;
 
-	scanf("%ld", &key);
+	scanf("%d", &key);
 	getchar();
 
 	Node node = search(root, key);
@@ -50,7 +50,7 @@ static inline void handle_cmd(char cmd, Node *root)
 int main(void)
 {
 	char input;
-	long key;
+	int key;
 
 	Node root = NULL;
 

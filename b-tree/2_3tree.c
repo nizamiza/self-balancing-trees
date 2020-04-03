@@ -1,129 +1,170 @@
+/**
+ * Implementation of 2-3 tree.
+ * Nizomiddin Toshpulatov <tremul27@gmail.com>
+ * 2020, FIIT STU, Bratislava, Slovakia
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define ORDER 3
-#define INDENT_INC 4
+#define INDENT_INC 8
 
-enum _node_children { LEFT, MIDDLE, RIGHT, EXTRA };
-enum _node_keys { LOW, MID, HIGH };
+#define __make_array(a, b, c) ((typeof(a)) { (a), (b), (c) })
 
-struct _internal_node {
-	struct _internal_node *children[ORDER + 1];
-	struct _internal_node *parent;
-	char keys_count;
-	char children_count;
-	int keys[ORDER];
+#define __sort_keys(a, b, c) (										\
+	((a) <= (b) && (b) <= (c)) 	? __make_array(a, b, c) :			\
+	((a) <= (c) && (c) < (b)) 	? __make_array(a, c, b) : 			\
+	((b) <= (a) && (a) < (c)) 	? __make_array(b, a, c) : 			\
+	((b) <= (c) && (c) < (a)) 	? __make_array(b, c, a) : 			\
+	((c) <= (a)) ? __make_array(c, a, b) : __make_array(c, b, a)	\
+)
+
+struct _node {
+	bool is_full;
+	int low_key;
+	int high_key;
+	struct _node *left, *middle, *right;
+	struct _node *parent;
 };
 
-static inline struct _internal_node *new_node(int key)
+static inline struct _node *_node(struct _node init)
 {
-	struct _internal_node *node =
-		(struct _internal_node *) malloc(sizeof(struct _internal_node));
+	struct _node *node = (struct _node *) malloc(sizeof(struct _node));
 
 	if (!node)
 		return NULL;
 
-	*node = (struct _internal_node) { { NULL }, NULL, 1, 0, { key, 0 } };
-	return node;
+	return (*node = init, node);
 }
 
-static inline int compare_keys(const void *key_a, const void *key_b)
+static inline struct _node *_split(struct _node *node, int key)
 {
-	return *(int *) key_a - *(int *) key_b;
+	int keys[] = __sort_keys(node->low_key, node->high_key, key);
+
+	 _node((struct _node) {
+		.left = _node((struct _node) { false, keys[0] }),
+		.middle = _node((struct _node) { false, keys[2] }),
+		.is_full = false,
+		.low_key = keys[1],
+	});
 }
 
-static inline
-struct _internal_node *add_key(struct _internal_node *node, int key)
+static inline struct _node *_insert_key(struct _node *node, int key)
+{
+	if (node->is_full)
+		return _split(node, key);
+
+	if (node->low_key < key) {
+		node->high_key = key;
+	} else {
+		node->high_key = node->low_key;
+		node->low_key = key;
+	}
+	
+	return (node->is_full = true, node);
+}
+
+static inline struct _node *_merge(struct _node *node, int key)
+{
+	if (!node->parent)
+		return node;
+}
+
+struct _node *search(struct _node *node, int key)
 {
 	if (!node)
-		return new_node(key);
+		return NULL;
 
-	node->keys[node->keys_count++] = key;
-	qsort(node->keys, node->keys_count, sizeof(int), compare_keys);
-
-	return node;
-}
-
-static inline
-struct _internal_node *add_child(
-	struct _internal_node *node, struct _internal_node *child
-) {
-	node->children[node->children_count++] = child;
-	return node;
-}
-
-static inline
-struct _internal_node *split_node(struct _internal_node *node)
-{
-	if (node->keys_count < ORDER)
+	if (key == node->low_key || key == node->high_key)
 		return node;
 
-	if (node->children_count < ORDER + 1) {
-		return add_child(
-			add_child(
-				add_key(node->parent, node->keys[MID]),
-				new_node(node->keys[LOW])
-			), new_node(node->keys[HIGH])
-		);
-	}
+	if (key <= node->low_key)
+		return search(node->left, key);
 
-	return add_child(
-		add_child(
-			add_key(node->parent, node->keys[MID]),
-			add_child(
-				add_child(
-					new_node(node->keys[LOW]),
-					node->children[LEFT]
-				), node->children[MIDDLE]
-			)
-		), add_child(
-			add_child(
-				new_node(node->keys[HIGH]),
-				node->children[RIGHT]
-			), node->children[EXTRA]
-		)
-	);
+	if (key > node->low_key && key < node->high_key)
+		return search(node->middle, key);
+
+	return search(node->right, key);
 }
 
-struct _internal_node *insert(struct _internal_node *node, int key)
-{
-	return split_node(add_key(node, key));
-}
-
-struct _internal_node *search(struct _internal_node *node, int key)
-{
-	return NULL;
-}
-
-void print_node(const struct _internal_node *node)
+struct _node *insert(struct _node *node, int key)
 {
 	if (!node)
-		return;
+		return _node((struct _node) { false, key });
 
-	for (int i = 0; i < node->keys_count; i++)
-		printf("[%d] ", node->keys[i]);
-	printf("\n");
+	if (!node->left)
+		return _insert_key(node, key);
+
+	if (key <= node->low_key)
+		node->left = insert(node->left, key);
+
+	else if (key > node->low_key && key < node->high_key)
+		node->middle = insert(node->middle, key);
+
+	else
+		node->right = insert(node->right, key);
+
+	return _merge(node, key);
 }
 
-void print(const struct _internal_node *node, int indent)
-{
-	if (!node)
-		return;
 
-	int i;
 
-	putchar('[');
 
-	for (i = 0; i < node->keys_count; i++)
-		printf("%d ", node->keys[i]);
 
-	putchar(']');
 
-	for (i = 0; i < indent; i++)
-		putchar(' ');
 
-	printf("--|\n|--");
 
-	for (i = 0; i < node->children_count; i++)
-		print(node->children[i], indent + INDENT_INC);
-}
+
+
+
+
+// void print_node(const struct _node *node)
+// {
+// 	if (!node)
+// 		return;
+
+// 	for (int i = 0; i < node->keys_count; i++)
+// 		printf("[%d] ", node->keys[i]);
+// 	printf("\n");
+// }
+
+// static inline int dcount(int n)
+// {
+// 	int count = 0;
+
+// 	while (n / 10)
+// 		count++;
+
+// 	return count;
+// }
+
+// void print(const struct _node *node, int indent)
+// {
+// 	if (!node)
+// 		return;
+
+// 	int i, indent_shift = 0;
+
+// 	for (i = 0; i < indent; i++)
+// 		putchar(' ');
+
+// 	printf("|--[");
+
+// 	for (i = 0; i < node->keys_count; i++) {
+
+// 		printf("%d", node->keys[i]);
+		
+// 		if (i < node->keys_count - 1)
+// 			putchar(' ');
+
+// 		indent_shift += dcount(node->keys[i]);
+// 	}
+
+// 	indent_shift += node->keys_count - 1;
+// 	printf("]--|\n");
+
+// 	for (i = 0; i < node->children_count; i++)
+// 		print(node->children[i], indent + indent_shift + INDENT_INC);
+// }
