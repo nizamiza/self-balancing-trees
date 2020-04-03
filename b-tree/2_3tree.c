@@ -294,17 +294,17 @@ void print(const struct _node *node, int indent)
 	for (i = 0; i < indent; i++)
 		putchar(' ');
 
-	printf("|--[");
+	printf("|--");
 
 	if (node->isfull) {
-		printf("[%d %d]\n", node->low_key, node->high_key);
+		printf("[%d %d]", node->low_key, node->high_key);
 		indent_shift += dcount(node->low_key) + dcount(node->high_key) + 1;
 	} else {
-		printf("[%d]\n", node->low_key);
+		printf("[%d]", node->low_key);
 		indent_shift += dcount(node->low_key);	
 	}
 
-	printf("]--|\n");
+	printf("--|\n");
 
 	if (node->isfull) {
 		print(node->left, __indent(indent, indent_shift));
