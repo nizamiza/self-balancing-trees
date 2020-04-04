@@ -5,9 +5,7 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
 #include "../treeio.h"
 
 #define ORDER 3
@@ -18,10 +16,10 @@
 #define __ASSIGN_SORTED_KEYS(a, b, c) (arr[0] = a, arr[1] = b, arr[2] = c)
 
 #define __DESTRUCT_MERGE_ARGS__					\
-	struct _node *node 		= args.node;		\
-	struct _node *left 		= args.left;		\
-	struct _node *middle 	= args.middle;		\
-	int prom_key 			= args.prom_key;	\
+	struct _node *node		= args.node;		\
+	struct _node *left		= args.left;		\
+	struct _node *middle	= args.middle;		\
+	int prom_key			= args.prom_key;	\
 
 struct _node {
 	bool isfull;
@@ -102,7 +100,6 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	free(node);
 
 	if (!parent->isfull) {
-
 		if (parent->low_key < prom_key) {
 			parent->high_key = prom_key;
 			parent->middle = left;
@@ -301,14 +298,14 @@ struct _node *insert(struct _node *node, int key)
 void print_node(const struct _node *node)
 {
 	if (!node) {
-		printf(ENONODE);
+		msg(ENONODE);
 		return;
 	}
 
 	if (node->isfull) {
-		printf("[%d %d]\n", node->low_key, node->high_key);
+		msg("[%d %d]\n", node->low_key, node->high_key);
 	} else {
-		printf("[%d]\n", node->low_key);
+		msg("[%d]\n", node->low_key);
 	}
 }
 
@@ -321,16 +318,16 @@ void print(const struct _node *node, int indent)
 		if ((i + 1) % INDENT_INC) {
 			putchar(' ');
 		} else {
-			printf(CLR_MAGENTA "|" CLR_RESET);
+			msg(CLR_MAGENTA "|" CLR_RESET);
 		}
 	}
 
-	printf(CLR_MAGENTA "-" CLR_RESET);
+	msg(CLR_MAGENTA "-" CLR_RESET);
 
 	if (node->isfull) {
-		printf(CLR_YELLOW "[%d %d]\n" CLR_RESET, node->low_key, node->high_key);
+		msg(CLR_YELLOW "[%d %d]\n" CLR_RESET, node->low_key, node->high_key);
 	} else {
-		printf(CLR_YELLOW "[%d]\n" CLR_YELLOW, node->low_key);
+		msg(CLR_YELLOW "[%d]\n" CLR_YELLOW, node->low_key);
 	}
 
 	if (!node->left)

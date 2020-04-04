@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "treeio.h"
-#include "b-tree/2_3tree.h"
+#include "avl/avlbst.h"
 
 static inline void exit_program(int code)
 {
