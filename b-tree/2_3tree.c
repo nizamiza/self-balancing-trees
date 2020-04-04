@@ -89,9 +89,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	__DESTRUCT_MERGE_ARGS__;
 
 	if (!node->parent) {
-		
 		left->parent = middle->parent = node;
-		
 		return _update_node(node, (struct _node) {
 			.isfull 	= false,
 			.low_key 	= prom_key,
@@ -101,6 +99,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	}
 
 	struct _node *parent = node->parent;
+	free(node);
 
 	if (!parent->isfull) {
 
@@ -117,17 +116,13 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 			parent->middle = middle;
 		}
 
-		parent->isfull = true;
-		free(node);
-
-		return parent;
+		return (parent->isfull = true, parent);
 	}
 
 	int merge_prom_key;
 	struct _node *parent_left, *parent_middle;
 
 	if (prom_key < parent->low_key) {
-
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= prom_key,
@@ -144,10 +139,8 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 			.parent 	= parent->parent
 		});
 
-		merge_prom_key = parent->low_key;
-		
+		merge_prom_key = parent->low_key;	
 	} else if (prom_key > parent->high_key) {
-
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= parent->low_key,
@@ -165,9 +158,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 		});
 
 		merge_prom_key = parent->high_key;
-
 	} else {
-
 		parent_left = _node((struct _node) {
 			.isfull 	= false,
 			.low_key 	= parent->low_key,
@@ -220,7 +211,6 @@ static inline struct _node *_split(struct _node *node, int key)
 	});
 
 	free(keys);
-
 	return _merge_with_parent((struct _merge_args) {
 		.node 		= node,
 		.left 		= left,
@@ -250,13 +240,7 @@ static inline struct _node *_get_root(struct _node *node)
 {
 	if (!node->parent)
 		return node;
-
-	struct _node *current = node->parent;
-
-	while (current->parent)
-		current = current->parent;
-
-	return current;
+	return _get_root(node->parent);
 }
 
 static inline struct _node *_insert_key(struct _node *node, int key)
@@ -334,7 +318,6 @@ void print(const struct _node *node, int indent)
 		return;
 
 	for (int i = 0; i < indent; i++) {
-
 		if ((i + 1) % INDENT_INC) {
 			putchar(' ');
 		} else {
