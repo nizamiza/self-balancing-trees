@@ -34,7 +34,7 @@ struct _merge_args {
 	int prom_key;
 };
 
-static inline struct _node *_node(struct _node init)
+struct _node *_node(struct _node init)
 {
 	struct _node *node = (struct _node *) malloc(sizeof(struct _node));
 
@@ -55,12 +55,12 @@ static inline struct _node *_node(struct _node init)
 	return (*node = init, node);
 }
 
-static inline struct _node *_update_node(struct _node *node, struct _node update)
+struct _node *_update_node(struct _node *node, struct _node update)
 {
 	return (*node = update, node);
 }
 
-static inline int *_sort_keys(int a, int b, int c)
+int *_sort_keys(int a, int b, int c)
 {
 	int *arr = (int *) calloc(ORDER, sizeof(int));
 
@@ -76,13 +76,13 @@ static inline int *_sort_keys(int a, int b, int c)
 	if (b < c && c < a)
 		return (__ASSIGN_SORTED_KEYS(b, c, a), arr);
 
-	if (c < a)
+	if (c < a && a < b)
 		return (__ASSIGN_SORTED_KEYS(c, a, b), arr);
 
 	return (__ASSIGN_SORTED_KEYS(c, b, a), arr);
 }
 
-static struct _node *_merge_with_parent(struct _merge_args args)
+struct _node *_merge_with_parent(struct _merge_args args)
 {
 	__DESTRUCT_MERGE_ARGS__;
 
@@ -183,7 +183,7 @@ static struct _node *_merge_with_parent(struct _merge_args args)
 	});
 }
 
-static inline struct _node *_split(struct _node *node, int key)
+struct _node *_split(struct _node *node, int key)
 {
 	if (key == node->low_key || key == node->high_key) {
 		throw(EDUPNODE);
@@ -216,7 +216,7 @@ static inline struct _node *_split(struct _node *node, int key)
 	});
 }
 
-static inline struct _node *_add_key(struct _node *node, int key)
+struct _node *_add_key(struct _node *node, int key)
 {
 	if (key == node->low_key) {
 		throw(EDUPNODE);
@@ -233,14 +233,14 @@ static inline struct _node *_add_key(struct _node *node, int key)
 	return (node->isfull = true, node);
 }
 
-static inline struct _node *_get_root(struct _node *node)
+struct _node *_get_root(struct _node *node)
 {
 	if (!node->parent)
 		return node;
 	return _get_root(node->parent);
 }
 
-static inline struct _node *_insert_key(struct _node *node, int key)
+struct _node *_insert_key(struct _node *node, int key)
 {
 	if (node->isfull) {
 		node = _split(node, key);
