@@ -1,6 +1,7 @@
 #include <stdlib.h>
-#include "treeio.h"
-#include "b-tree/2_3tree.h"
+#include "include/treeio.h"
+#include "include/2_3tree.h"
+#include "include/2_3tree_assert.h"
 
 static inline void exit_program(int code)
 {

@@ -1,3 +1,4 @@
-.vscode
-treeio
-b-tree/2_3tree_assert
+out
+obj
+Makefile
+makefile

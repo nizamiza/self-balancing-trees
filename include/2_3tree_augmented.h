@@ -1,17 +1,22 @@
-#ifndef B2_3TREE_H
-#define B2_3TREE_H
+#ifndef B2_3TREE_AUGMENTED_H
+#define B2_3TREE_AUGMENTED_H
 
-#ifndef INTERNAL_TESTING
+/**
+ * Implementation of 2-3 tree.
+ * Nizomiddin Toshpulatov <tremul27@gmail.com>
+ * 2020, FIIT STU, Bratislava, Slovakia
+ */
 
-typedef struct _node *Node;
-
-extern Node search(Node node, int key);
-extern Node insert(Node node, int key);
-extern void print(const Node node, int indent);
-extern void print_node(const Node node);
-
-#else
+#include <stdlib.h>
 #include <stdbool.h>
+#include "../../include/treeio.h"
+
+#define ORDER 3
+#define INDENT_INC 4
+
+#define __indent(current) ((current) + INDENT_INC)
+
+#define __ASSIGN_SORTED_KEYS(a, b, c) (arr[0] = a, arr[1] = b, arr[2] = c)
 
 #define __DESTRUCT_MERGE_ARGS__					\
 	struct _node *node		= args.node;		\
@@ -43,5 +48,4 @@ extern struct _node *_insert_key(struct _node *node, int key);
 extern struct _node *search(struct _node *node, int key);
 extern struct _node *insert(struct _node *node, int key);
 
-#endif
 #endif
