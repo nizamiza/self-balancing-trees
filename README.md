@@ -28,7 +28,7 @@ Binary search tree is defined as an AVL tree, if and only if, each node of the t
 This implementation includes only *search* and *insert* operations.
 For each node we can define a structure:
 
-```
+```c
 struct _node {
 	struct _node *left;
 	struct _node *right;
@@ -45,7 +45,7 @@ Each time we insert a new node, we calculate balance factor of that node, and if
 
 To left rotate node is to set its *right subtree* to *left subtree of its right subtree*, and set itself as the *left subtree* of its *right subtree*. I.e.:
 
-```
+```c
 struct _node *rotate_left(struct _node *node)
 {
 	struct _node *right = node->right;
@@ -60,7 +60,7 @@ struct _node *rotate_left(struct _node *node)
 
 Right rotation is the same process as the left rotation, but instead of setting *right subtree* of the node, we set its *left subtree* to right subtree of its *left subtree*. And after that, similar to the left rotation, we set the node itself as the *right subtree* of its *left subtree*. I.e.:
 
-```
+```c
 struct _node *rotate_right(struct _node *node)
 {
 	struct _node *left = node->left;
@@ -81,7 +81,7 @@ When new node is inserted to AVL tree, there are [4 cases][1]:
 4. Right Left case.
 
 Based on these cases, we can define rebalancing routine as follows:
-```
+```c
 struct _node *rebalance(struct _node *node, long key)
 {
 	if (!node)

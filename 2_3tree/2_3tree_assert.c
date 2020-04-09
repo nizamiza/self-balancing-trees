@@ -1,3 +1,7 @@
+#include <stdarg.h>
+#include <assert.h>
+#include "../include/2_3tree_augmented.h"
+
 #define INTERNAL_TESTING
 #define AUTO_CLEANUP
 
@@ -5,6 +9,7 @@
 
 #define __END_NODE_TEST__ 	\
 	free(node);				\
+	return NULL;			\
 
 #else
 
@@ -12,11 +17,6 @@
 	return node;			\
 
 #endif
-
-#include <assert.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include "2_3tree.h"
 
 static inline bool _nodes_equal(struct _node node_a, struct _node node_b)
 {
@@ -44,7 +44,7 @@ static struct _node *_node_alloc_test(struct _node init)
 	__END_NODE_TEST__;
 }
 
-static void _update_node_test(struct _node *node, struct _node update)
+static struct _node *_update_node_test(struct _node *node, struct _node update)
 {
 	node = _update_node(node, update);
 	assert(node != NULL && _nodes_equal(*node, update));
@@ -114,7 +114,7 @@ static void _merge_with_parent_test(struct _merge_args args)
 	free(merged_node);
 }
 
-static void _split_test(struct _node *node, int key)
+static struct _node *_split_test(struct _node *node, int key)
 {
 	struct _node *node_copy = _node(*node);
 	node = _split(node, key);
@@ -122,13 +122,13 @@ static void _split_test(struct _node *node, int key)
 	assert(node != NULL);
 
 	if (key == node_copy->low_key || key == node_copy->high_key)
-		assert(_nodes_equal(*node, *node_copy));
+	assert(_nodes_equal(*node, *node_copy));
 
 	free(node_copy);
 	__END_NODE_TEST__;
 }
 
-static void _add_key_test(struct _node *node, int key)
+static struct _node *_add_key_test(struct _node *node, int key)
 {
 	assert(!node->isfull);
 	struct _node *node_copy = _node(*node);
@@ -148,7 +148,7 @@ static void _add_key_test(struct _node *node, int key)
 	__END_NODE_TEST__;
 }
 
-static void _search_test(struct _node *node, int key)
+static struct _node *_search_test(struct _node *node, int key)
 {
 	struct _node *result = search(node, key);
 	assert(node != NULL);
@@ -163,7 +163,7 @@ static void _search_test(struct _node *node, int key)
 	__END_NODE_TEST__;
 }
 
-static void _insert_test(struct _node *node, int key)
+static struct _node *_insert_test(struct _node *node, int key)
 {
 	struct _node *node_copy = _node(*node);
 	struct _node *search_res = NULL;
@@ -180,8 +180,8 @@ static void _insert_test(struct _node *node, int key)
 		search_res = search(node, key);
 		assert(
 			search_res != NULL &&
-			search_res->low_key == key ||
-			search_res->high_key == key
+			(search_res->low_key == key ||
+			search_res->high_key == key)
 		);
 	}
 
@@ -204,7 +204,7 @@ static void run_2arg_test(void (*test)(struct _node *, int), int amount, ...)
 	va_end(args);
 }
 
-int main(void)
+void run_internal_tests()
 {
 	_node_alloc_test((struct _node) {
 		.isfull = true, .low_key = 25, .high_key = 50
@@ -244,15 +244,15 @@ int main(void)
 	});
 
 	_update_node_test(_node((struct _node) {
-		.isfull = false,
-		.low_key = 15,
-		.high_key = 9000,
-		.left = NULL,
-		.right = (struct _node *) malloc(sizeof(struct _node)),
-	}), (struct _node) {
-		.isfull = true,
-		.low_key = -542682,
-		.high_key = 0,
+			.isfull = false,
+			.low_key = 15,
+			.high_key = 9000,
+			.left = NULL,
+			.right = (struct _node *) malloc(sizeof(struct _node)),
+		}), (struct _node) {
+			.isfull = true,
+			.low_key = -542682,
+			.high_key = 0,
 	});
 
 	_sort_keys_test(15, -7, 12);
