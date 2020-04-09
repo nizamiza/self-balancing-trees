@@ -1,7 +1,5 @@
-*~
-*.swp
-*.swo
+**/*~
+**/*.swp
+**/*.swo
 out
 obj
-Makefile
-makefile
