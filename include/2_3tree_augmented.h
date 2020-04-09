@@ -9,7 +9,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "../../include/treeio.h"
+#include "treeio.h"
 
 #define ORDER 3
 #define INDENT_INC 4

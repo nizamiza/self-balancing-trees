@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "include/treeio.h"
-#include "include/2_3tree.h"
-#include "include/2_3tree_assert.h"
+#include "include/avltree.h"
+#include "include/avltree_assert.h"
 
 static inline void exit_program(int code)
 {
@@ -18,10 +18,10 @@ static inline void insert_nodes(Node *root)
 }
 
 static inline void search_node(Node root)
-{
-	int key;
+{ int key;
 
-	scanf("%d", &key);
+	if (scanf("%d", &key) != 1)
+		return;
 	getchar();
 
 	Node node = search(root, key);
@@ -50,7 +50,6 @@ static inline void handle_cmd(char cmd, Node *root)
 int main(void)
 {
 	char input;
-	int key;
 
 	Node root = NULL;
 

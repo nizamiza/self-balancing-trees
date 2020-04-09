@@ -1,16 +1,6 @@
-#include <stdlib.h>
-#include "../treeio.h"
+#include "../include/avltree_augmented.h"
 
-#define __max(a, b) ((a) > (b) ? (a) : (b)) 
-
-struct _node {
-	struct _node *left;
-	struct _node *right;
-	char bfactor;
-	int key;
-};
-
-static inline struct _node *_node(int key)
+struct _node *_node(int key)
 {
 	struct _node *new = (struct _node *) malloc(sizeof(struct _node));
 
@@ -21,7 +11,7 @@ static inline struct _node *_node(int key)
 	return new;
 }
 
-static inline int _get_height(const struct _node* node)
+int _get_height(const struct _node* node)
 {
 	if (!node)
 		return -1;
@@ -29,35 +19,35 @@ static inline int _get_height(const struct _node* node)
 	return __max(_get_height(node->left), _get_height(node->right)) + 1;
 }
 
-static inline struct _node *set_bfactor(struct _node *node)
+struct _node *_set_bfactor(struct _node *node)
 {
 	node->bfactor = _get_height(node->left) - _get_height(node->right);
 	return node;
 }
 
-static inline struct _node *_rotate_right(struct _node *node)
+struct _node *_rotate_right(struct _node *node)
 {
 	struct _node *left = node->left;
 
 	node->left = left->right;
 	left->right = node;
 
-	set_bfactor(node);
-	return set_bfactor(left);
+	_set_bfactor(node);
+	return _set_bfactor(left);
 }
 
-static inline struct _node *_rotate_left(struct _node *node)
+struct _node *_rotate_left(struct _node *node)
 {
 	struct _node *right = node->right;
 
 	node->right = right->left;
 	right->left = node;
 
-	set_bfactor(node);
-	return set_bfactor(right);
+	_set_bfactor(node);
+	return _set_bfactor(right);
 }
 
-static inline struct _node *_rebalance(struct _node *node, int key)
+struct _node *_rebalance(struct _node *node, int key)
 {
 	if (!node)
 		return NULL;
@@ -107,15 +97,7 @@ struct _node *insert(struct _node *node, int key)
 		throw(EDUPNODE);
 	}
 
-	return _rebalance(set_bfactor(node), key);
-}
-
-static inline const char *_bfactor_to_str(const struct _node *node)
-{
-	return (char []) {
-		node->bfactor < 0 ? '-' : '+',
-		'0' + abs(node->bfactor)
-	};
+	return _rebalance(_set_bfactor(node), key);
 }
 
 /**

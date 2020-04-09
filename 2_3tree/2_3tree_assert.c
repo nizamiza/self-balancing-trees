@@ -1,4 +1,3 @@
-#include <stdarg.h>
 #include <assert.h>
 #include "../include/2_3tree_augmented.h"
 
@@ -151,12 +150,14 @@ static struct _node *_add_key_test(struct _node *node, int key)
 static struct _node *_search_test(struct _node *node, int key)
 {
 	struct _node *result = search(node, key);
-	assert(node != NULL);
 
 	if (!node) {
 		assert(result == NULL);
 	} else {
-		assert(result->low_key == key || result->high_key == key);
+		assert(
+			result != NULL &&
+			(result->low_key == key || result->high_key == key)
+		);
 	}
 
 	free(result);
@@ -167,8 +168,8 @@ static struct _node *_insert_test(struct _node *node, int key)
 {
 	struct _node *node_copy = _node(*node);
 	struct _node *search_res = NULL;
+	
 	node = insert(node, key);
-
 	assert(node != NULL);
 
 	if (!node_copy) {
@@ -189,19 +190,6 @@ static struct _node *_insert_test(struct _node *node, int key)
 	free(search_res);
 
 	__END_NODE_TEST__;
-}
-
-static void run_2arg_test(void (*test)(struct _node *, int), int amount, ...)
-{
-	assert(amount >= 0);
-
-	va_list args;
-	va_start(args, amount);
-
-	for (int i = 0; i < amount; i++)
-		test(va_arg(args, struct _node *), va_arg(args, int));
-
-	va_end(args);
 }
 
 void run_internal_tests()

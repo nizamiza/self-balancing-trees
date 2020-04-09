@@ -1,10 +1,10 @@
-#ifndef AVLBST_H
-#define AVLBST_H
+#ifndef AVL_TREE_H
+#define AVL_TREE_H
 
 typedef struct _node *Node;
 
-extern Node search(Node node, long key);
-extern Node insert(Node node, long key);
+extern Node search(Node node, int key);
+extern Node insert(Node node, int key);
 extern void print_node(const Node node);
 extern void print(const Node node, int indent);
 
