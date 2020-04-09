@@ -23,6 +23,9 @@
 #define ENONODE "Node is NULL, nothing to print"
 #define EDUPNODE "Duplicate node insertion. Operation rejected"
 
+#define WELCOME_MSG "-- Welcome to self-balancing bst interaction tool!\nCommands:\n\ti [...values] - insert keys\n\ts [value] - search for value\n\tp - print tree\n\tr - reset tree\n\tq - exit program\n--------------------------\n" 
+	
+
 #define EXIT_FUNC 		(printf(CLR_BLUE "--Exiting %s\n" CLR_RESET, __func__))
 #define throw(error) 	(printf(CLR_RED "--Error: %s--" CLR_YELLOW " in %s\n" CLR_RESET, error, __func__))
 

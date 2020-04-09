@@ -38,7 +38,6 @@ static inline void handle_cmd(char cmd, Node *root)
 	switch (cmd) {
 		case 'i'	: insert_nodes(root); 			break;
 		case 'p'	: print(*root, 0); 				break;
-		case 'b'	: print(*root, 0); 				break;
 		case 's'	: search_node(*root);			break;
 		case 'q'	: exit_program(EXIT_SUCCESS);	break;
 		case 'r'	: *root = NULL;					break;
@@ -52,6 +51,7 @@ int main(void)
 	char input;
 
 	Node root = NULL;
+	printf(WELCOME_MSG);
 
 	while (scanf("%c", &input) == 1)
 		handle_cmd(input, &root);
