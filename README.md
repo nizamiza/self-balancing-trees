@@ -29,7 +29,7 @@ Binary search tree is defined as an AVL tree, if and only if, each node of the t
 
 ## Implementation
 
-This implementation includes only *search* and *insert* operations.
+This implementation is based on [wikipedia article][0] as well as [geeksforgeeks article][1] about AVL tree. This implementation includes only *search* and *insert* operations.
 
 For each node we can define a structure:
 
@@ -140,7 +140,7 @@ To insert a new node to the tree, we search for the correct position for the nod
 
 ## Implementation
 
-This implementation includes only *search* and *insert* operations.
+This implementation is based on [paperwork][5], which is part of the CS230 Data Structures course at the Princeton University. This implementation includes only *search* and *insert* operations.
 
 For each internal node we can define a structure:
 
@@ -403,11 +403,17 @@ struct rbNode {
 
 # Comparison
 
-All three implementations were tested for time efficiency during insertion and search with this set of keys:
+All three implementations were tested for time efficiency during insertion and search with set of keys listed in the `randnumbers` file in the `data` directory of the project. Results were following:
 
-```
+| Tree type | Average insertion time | Average search time | Node size |
+|-----------|------------------------|---------------------|-----------|
+| AVL       | ~0.000160s             | ~0.000001s          | 24 bytes  |
+| 2-3       | ~0.000050s             | ~0.000001s          | 48 bytes  |
+| Red-black | ~0.000052s             | ~0.000002s          | 24 bytes  |
 
-```
+As we can see, the *fastest insertions* were in *2-3 and Red-black trees*, although 2-3 tree requires twice the size of memory for each node compared to red-black or the AVL trees.
+
+*Slowest insertions* were in the AVL tree, but in comparison to the red-black tree, AVL has better height balance, thus look up operations are faster inside AVL tree.
 
 # Testing
 
@@ -418,6 +424,7 @@ Nearly each function of the implementations was tested with unit tests (except f
 * [en.wikipedia.org, AVL tree][0]
 * [www.geeksforgeeks.org, AVL tree | Set 1 (Insertion)][1]
 * [en.wikipedia.org, 2-3 tree][2]
+* [CS230 Data Structures, Prof. Lyn Turbak, 2-3 Trees][5]
 * [en.wikipedia.org, Red-black tree][3]
 * [www.programiz.com, Red-black tree][4]
 
@@ -426,5 +433,6 @@ Nearly each function of the implementations was tested with unit tests (except f
 [2]: https://en.wikipedia.org/wiki/2%E2%80%933_tree
 [3]: https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
 [4]: https://www.programiz.com/dsa/red-black-tree
+[5]: https://www.cs.princeton.edu/~dpw/courses/cos326-12/ass/2-3-trees.pdf
 
 2020, FIIT STU, Bratislava, Slovakia.

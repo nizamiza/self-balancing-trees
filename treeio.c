@@ -1,8 +1,8 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
 #include "include/treeio.h"
-#include "include/2_3tree.h"
-#include "include/2_3tree_assert.h"
+#include "include/rbtree.h"
 
 #define DATA_PATH "data/randnumbers"
 #define OUT_PATH "data/timestamps"
@@ -154,7 +154,7 @@ int main(void)
 	char input;
 
 	Node root = NULL;
-	printf(WELCOME_MSG);
+	msg(WELCOME_MSG);
 
 	while (scanf("%c", &input) == 1)
 		handle_cmd(input, &root);
