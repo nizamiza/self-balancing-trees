@@ -1,18 +1,19 @@
-flags := -g -O2 -Wall
+flags := -g -O2 -Wall 
 
 outdir := out
 incdir := include
 objdir := objects
 
 target ?= avltree
+targetdir = $(objdir)/$(target)
 
-objs := $(addprefix $(objdir)/, $(patsubst %.c, %.o, $(wildcard *.c)))
+src := $(wildcard *.c)
+target_src := $(wildcard $(target)/*.c) 
 
-target_objs := $(addprefix $(objdir)/, $(patsubst %.c, %.o, \
-	$(wildcard $(target)/*.c) \
-))
+objs := $(addprefix $(objdir)/, $(patsubst %.c, %.o, $(src)))
+target_objs := $(addprefix $(objdir)/, $(patsubst %.c, %.o, $(target_src)))
 
-$(objdir)/$(target)/%.o: $(target)/%.c $(incdir)/%.h
+$(targetdir)/%.o: $(target)/%.c $(incdir)/%.h
 	@echo $@
 	cc $(flags) -c $< -o $@
 
@@ -23,12 +24,14 @@ $(objdir)/%.o: %.c $(incdir)/%.h
 $(outdir)/treeio: $(objs) $(target_objs)
 	cc $(flags) $? -o $@
 
-$(objs) ($target_objs): | $(objdir)
-$(target_objs): | $(objdir) $(target)
+$(objs): | $(objdir)
+$(target_objs): $(target) | $(targetdir)
 
 $(objdir):
 	mkdir $(objdir)
-	mkdir $(objdir)/$(target)
+
+$(targetdir):
+	mkdir $(targetdir)
 
 .PHONY: clean
 clean:

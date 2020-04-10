@@ -26,6 +26,7 @@ Binary search tree is defined as an AVL tree, if and only if, each node of the t
 ## Implementation
 
 This implementation includes only *search* and *insert* operations.
+
 For each node we can define a structure:
 
 ```c
@@ -37,7 +38,9 @@ struct _node {
 };
 ```
 
-where `bfactor` stands for *balance factor*.
+where `bfactor` stands for the *balance factor*.
+
+Search routine is the same as for the regular Binary Search Tree, so we will skip it and go right to the insertion.
 
 Insertion operation of the AVL tree is similar to one of regular binary search tree. Simple recursive traversal will do the trick. Important bit comes after the fact of insertion, which is the rebalancing of tree.
 
@@ -112,20 +115,262 @@ struct _node *rebalance(struct _node *node, long key)
 # 2-3 tree
 ## Introduction
 
-2-3 tree is a self-balancing search tree, where each node (ofter referred as internal node) has either *2 children* and *1 key* or *three children* and *2 keys*.
+2-3 tree is a self-balancing search tree, where each node (often referred to as the internal node) has either *2 children* and *1 key* or *three children* and *2 keys*.
 
-2-3 trees are always balanced and the logic behind it is quite beautiful.
+Leaves of 2-3 tree are always on the level, meaning that tree is always balanced. [Traversal algorithm][2] of 2-3 tree goes as follows:
+
+1. Let `T` be a 2–3 tree and `d` be the data element we want to find. If `T` is empty, then `d` is not in `T` and we're done.
+2. Let `r` be the root of `T`.
+3. Suppose `r` is a leaf. If `d` is not in `r`, then `d` is not in `T`. Otherwise, `d` is in `T`. In particular, `d` can be found at a leaf node. We need no further steps and we're done.
+4. Suppose `r` is a 2-node with left child `L` and right child `R`. Let e be the data element in `r`. There are three cases:
+	* If `d` is equal to e, then we've found `d` in `T` and we're done.
+	* If `d < e`, then set `T` to `L`, which by definition is a 2–3 tree, and go back to step 2.
+	* If `d > e`, then set `T` to `R` and go back to step 2.
+5. Suppose `r` is a 3-node with left child `L`, middle child `M`, and right child `R`. Let `a` and `b` be the two data elements of `r`, where `a < b`. There are four cases:
+	* If `d` is equal to `a` or `b`, then `d` is in `T` and we're done.
+	* If `d < a`, then set `T` to `L` and go back to step 2.
+	* If `a < d < b`, then set `T` to `M` and go back to step 2.
+	* If `d > b`, then set `T` to `R` and go back to step 2.
+
+To insert a new node to the tree, we search for the correct position for the node with traversal algorithm and insert it there. If the node becomes a 4-node, then we split it into 2 nodes, promoting middle key to the parent node. This process repeats recursively until we reach the 2-node node, or the root, in which case we split the root as well, making a new one out of the middle key. 
 
 ## Implementation
 
 This implementation includes only *search* and *insert* operations.
+
+For each internal node we can define a structure:
+
+```c
+struct _node {
+	bool isfull;
+	int low_key;
+	int high_key;
+	struct _node *left, *middle, *right;
+	struct _node *parent;
+};
+```
+
+where `isfull` indicates whether node is 3-node (*has 2 keys and 3 children*).
+
+Search routine for the 2-3 tree is similar to the regular BST, only difference being that we have an extra condition for the recursive call when the node is a 3-node, and search value is between keys of the node. I.e.:
+
+```c
+struct _node *search(struct _node *node, int key)
+{
+	if (!node)
+		return NULL;
+
+	if (key == node->low_key || (node->isfull && key == node->high_key))
+		return node;
+
+	if (key < node->low_key)
+		return search(node->left, key);
+
+	if (node->right && key > node->high_key)
+		return search(node->right, key);
+
+	return search(node->middle, key);
+}
+```
+
+Insertion is the most complex part of this implementation. Steps are the same as described in the *Introduction*. After traversing the tree and finding a spot for the new node, we insert the key:
+
+```c
+struct _node *_insert_key(struct _node *node, int key)
+{
+	if (node->isfull) {
+		node = _split(node, key);
+	} else {
+		node = _add_key(node, key);
+	}
+		
+	return _get_root(node);
+}
+```
+
+If node is not full, then we just compare new key with the existing key and insert it to the correct position. If new key is a duplicate, then we throw `EDUPNODE` (error duplicate node) and simply return unchanged node:
+
+```c
+struct _node *_add_key(struct _node *node, int key)
+{
+	if (key == node->low_key) {
+		throw(EDUPNODE);
+		return node;
+	}
+
+	if (node->low_key < key) {
+		node->high_key = key;
+	} else {
+		node->high_key = node->low_key;
+		node->low_key = key;
+	}
+
+	return (node->isfull = true, node);
+}
+```
+
+But if node is full, then we are at the step **5** of our insertion algorithm, meaning we have to split our node. To do so, we sort all 3 keys (two keys of the node, and the key that is being inserted) and create **2** new nodes from the smallest and the largest keys. The middle size key gets promoted to the parent: 
+
+```c
+struct _node *_split(struct _node *node, int key)
+{
+	if (key == node->low_key || key == node->high_key) {
+		throw(EDUPNODE);
+		return node;
+	}
+
+	int *keys = _sort_keys(node->low_key, node->high_key, key);
+	int prom_key = keys[1];
+
+	struct _node *left, *middle;
+
+	left = _node((struct _node) {
+		.isfull 	= false,
+		.low_key 	= keys[0],
+		.parent 	= node->parent
+	});
+
+	middle = _node((struct _node) {
+		.isfull 	= false,
+		.low_key 	= keys[2],
+		.parent 	= node->parent
+	});
+
+	free(keys);
+	return _merge_with_parent((struct _merge_args) {
+		.node 		= node,
+		.left 		= left,
+		.middle 	= middle,
+		.prom_key 	= prom_key
+	});
+}
+```
+
+After that we need to merge our **2** new nodes with the parent node, as well as add the promoted key to its list of keys. This step can be divided into **3** scenarios:
+
+1. Node does not have a parent.
+2. Parent node is not full (2-node).
+3. Parent node is full (3-node).
+
+In the **first** case, we simply return a new node, which has a single key (promoted key) and two children (newly made 2 nodes).
+
+In the **second** case, we add promoted key to the parent and attach **2** new children alongside his single child.
+
+In the **third** case, we split the parent itself and promote its middle key to its parent.
+
+As expectedly, this process repeats recursively until we reach the first 2-node node, or the root.
+
+```c
+struct _node *_merge_with_parent(struct _merge_args args)
+{
+	__DESTRUCT_MERGE_ARGS__;
+
+	if (!node->parent) {
+		left->parent = middle->parent = node;
+		return _update_node(node, (struct _node) {
+			.isfull 	= false,
+			.low_key 	= prom_key,
+			.left 		= left,
+			.middle 	= middle
+		});
+	}
+
+	struct _node *parent = node->parent;
+	free(node);
+
+	if (!parent->isfull) {
+		if (parent->low_key < prom_key) {
+			parent->high_key = prom_key;
+			parent->middle = left;
+			parent->right = middle;
+		} else {
+			parent->high_key =parent->low_key;
+			parent->low_key = prom_key;
+
+			parent->left = left;
+			parent->right = parent->middle;
+			parent->middle = middle;
+		}
+
+		return (parent->isfull = true, parent);
+	}
+
+	int merge_prom_key;
+	struct _node *parent_left, *parent_middle;
+
+	if (prom_key < parent->low_key) {
+		parent_left = _node((struct _node) {
+			.isfull 	= false,
+			.low_key 	= prom_key,
+			.left 		= left,
+			.middle 	= middle,
+			.parent 	= parent->parent
+		});
+
+		parent_middle = _node((struct _node) {
+			.isfull 	= false,
+			.low_key 	= parent->high_key,
+			.left 		= parent->middle,
+			.middle 	= parent->right,
+			.parent 	= parent->parent
+		});
+
+		merge_prom_key = parent->low_key;	
+	} else if (prom_key > parent->high_key) {
+		parent_left = _node((struct _node) {
+			.isfull 	= false,
+			.low_key 	= parent->low_key,
+			.left 		= parent->left,
+			.middle 	= parent->middle,
+			.parent 	= parent->parent
+		});
+
+		parent_middle = _node((struct _node) {
+			.isfull 	= false,
+			.low_key 	= prom_key,
+			.left 		= left,
+			.middle 	= middle,
+			.parent 	= parent->parent
+		});
+
+		merge_prom_key = parent->high_key;
+	} else {
+		parent_left = _node((struct _node) {
+			.isfull 	= false,
+			.low_key 	= parent->low_key,
+			.left 		= parent->left,
+			.middle 	= left,
+			.parent 	= parent->parent
+		});
+
+		parent_middle = _node((struct _node) {
+			.isfull 	= false,
+			.low_key 	= parent->high_key,
+			.left 		= middle,
+			.middle 	= parent->right,
+			.parent 	= parent->parent
+		});
+
+		merge_prom_key = prom_key;
+	}
+
+	return _merge_with_parent((struct _merge_args) {
+		.node 		= parent,
+		.left 		= parent_left,
+		.middle 	= parent_middle,
+		.prom_key 	= merge_prom_key
+	});
+}
+```
 
 # Comparison
 
 # References
 
 * [www.geeksforgeeks.org, AVL Tree | Set 1 (Insertion)][1]
+* [en.wikipedia.org, 2-3 tree][2]
 
 [1]: https://www.geeksforgeeks.org/avl-tree-set-1-insertion/
+[2]: https://en.wikipedia.org/wiki/2%E2%80%933_tree
 
 2020, FIIT STU, Bratislava, Slovakia.
