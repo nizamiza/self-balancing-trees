@@ -1,14 +1,18 @@
-- [AVL Tree](#avl-tree)
+- [AVL tree](#avl-tree)
 	- [Introduction](#introduction)
 	- [Implementation](#implementation)
 - [2-3 tree](#2-3-tree)
 	- [Introduction](#introduction-1)
 	- [Implementation](#implementation-1)
+- [Red-black tree](#red-black-tree)
+	- [Introduction](#introduction-2)
+	- [Implementation](#implementation-2)
 - [Comparison](#comparison)
+- [Testing](#testing)
 - [References](#references)
    
 
-# AVL Tree
+# AVL tree
 ## Introduction
 
 AVL tree, where AVL stands for its creators - *Adelson-Velsky and Landis*, is a self balancing binary search tree. It is was the first such tree to be invented.
@@ -363,14 +367,64 @@ struct _node *_merge_with_parent(struct _merge_args args)
 }
 ```
 
+# Red-black tree
+## Introduction
+
+Red-black tree is a self-balancing binary search tree, where each node is colored either [red or black][3]:
+
+* Root of the red-black tree is always black.
+* Each leaf is colored black.
+* If node is red, then both of its children are black.
+* Every path from a given node to any of its descendant NIL nodes goes through the same number of black nodes.
+
+Like AVL tree, Red-black tree is height balanced. The balancing rule is:
+
+> The path from the root to the farthest leaf is no more than twice as long as the path from the root to the nearest leaf
+
+## Implementation
+
+This implementation was taken from [www.programiz.com][4] and it serves only for comparison purposes. Although, several alterations to the source code had to be made. These were primarily to adapt code for the testing and comparison:
+
+* global variable `root` was removed;
+* `insertion` function was renamed to `insert`, and was tweaked to work without global variable;
+* `deletion` function was renamed to `delete` and tweaked to work without global variable (*although it's never used*);
+* additional `search` function was implemented;
+* additional `print_node` function was implemented;
+* additional `print` function was implemented.
+
+This implementation defined an internal node as a structure:
+
+```c
+struct rbNode {
+	int data, color;
+	struct rbNode *link[2];
+};
+```
+
 # Comparison
+
+All three implementations were tested for time efficiency during insertion and search with this set of keys:
+
+```
+
+```
+
+# Testing
+
+Nearly each function of the implementations was tested with unit tests (except for the Red-black tree). Test functions including some test scenarios can be found in the same directory of the source code of the implementation. I.e., tests for the 2-3 tree implementation, are located in `2_3tree/2_3tree_assert.c`.
 
 # References
 
-* [www.geeksforgeeks.org, AVL Tree | Set 1 (Insertion)][1]
+* [en.wikipedia.org, AVL tree][0]
+* [www.geeksforgeeks.org, AVL tree | Set 1 (Insertion)][1]
 * [en.wikipedia.org, 2-3 tree][2]
+* [en.wikipedia.org, Red-black tree][3]
+* [www.programiz.com, Red-black tree][4]
 
+[0]: https://en.wikipedia.org/wiki/AVL_tree
 [1]: https://www.geeksforgeeks.org/avl-tree-set-1-insertion/
 [2]: https://en.wikipedia.org/wiki/2%E2%80%933_tree
+[3]: https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
+[4]: https://www.programiz.com/dsa/red-black-tree
 
 2020, FIIT STU, Bratislava, Slovakia.
