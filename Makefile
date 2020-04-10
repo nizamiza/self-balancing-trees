@@ -1,34 +1,39 @@
-flags := -g -O2 -Wall
+vpath %.h include
+vpath %.o objects
+
+flags := -g -O2 -Wall 
 
 outdir := out
 incdir := include
 objdir := objects
 
 target ?= avltree
+assert ?= false
 
-objs := $(addprefix $(objdir)/, $(patsubst %.c, %.o, $(wildcard *.c)))
+assert_suf = _assert
 
-target_objs := $(addprefix $(objdir)/, $(patsubst %.c, %.o, \
-	$(wildcard $(target)/*.c) \
-))
+objs = $(addprefix $(objdir)/, treeio.o $(target).o)
 
-$(objdir)/$(target)/%.o: $(target)/%.c $(incdir)/%.h
-	@echo $@
-	cc $(flags) -c $< -o $@
+ifeq ($(assert), true)
+	objs += $(addprefix $(objdir)/, $(target)$(assert_suf).o)
+endif
 
-$(objdir)/%.o: %.c $(incdir)/%.h
-	@echo $@
-	cc $(flags) -c $< -o $@
+$(outdir)/treeio: $(objs)
+	cc $(flags) $^ -o $@
 
-$(outdir)/treeio: $(objs) $(target_objs)
-	cc $(flags) $? -o $@
-
-$(objs) ($target_objs): | $(objdir)
-$(target_objs): | $(objdir) $(target)
+$(objs): | $(objdir)
 
 $(objdir):
 	mkdir $(objdir)
-	mkdir $(objdir)/$(target)
+
+$(objdir)/treeio.o: treeio.c treeio.h
+	cc $(flags) -c $< -o $@
+
+$(objdir)/$(target).o: $(target)/$(target).c $(target).h
+	cc $(flags) -c $< -o $@
+
+$(objdir)/$(target)$(assert_suf).o: $(objdir)/$(target).o $(target)/$(target)$(assert_suf).c $(target)$(assert_suf).h
+	cc $(flags) -c $(target)/$(target)$(assert_suf).c -o $@
 
 .PHONY: clean
 clean:

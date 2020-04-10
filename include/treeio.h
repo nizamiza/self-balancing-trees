@@ -23,7 +23,11 @@
 #define ENONODE "Node is NULL, nothing to print"
 #define EDUPNODE "Duplicate node insertion. Operation rejected"
 
-#define WELCOME_MSG "-- Welcome to self-balancing bst interaction tool!\nCommands:\n\ti [...values] - insert keys\n\ts [value] - search for value\n\tp - print tree\n\tr - reset tree\n\tq - exit program\n--------------------------\n" 
+#define COMMANDS CLR_CYAN "Commands:\n\th - print commands\n\ti [...values] - insert keys\n\ts [value] - search for value\n\tt - run insert and search tests from \n\t\t./data/randnumbers file.\n\t\tResults will be written to the ./data/timestampts file.\n\tp - print tree\n\tr - reset tree\n\tq - exit program\n--------------------------\n" CLR_RESET
+
+#define TESTS_COMPLETE_MSG CLR_YELLOW "\n>> Tests complete. Results written to the ./data/timestampts file --\n" CLR_RESET
+
+#define WELCOME_MSG CLR_MAGENTA "-- Welcome to self-balancing bst interaction tool!\n" CLR_RESET COMMANDS
 	
 
 #define EXIT_FUNC 		(printf(CLR_BLUE "--Exiting %s\n" CLR_RESET, __func__))

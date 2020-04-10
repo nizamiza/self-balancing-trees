@@ -153,12 +153,13 @@ static struct _node *_search_test(struct _node *node, int key)
 
 	if (!node) {
 		assert(result == NULL);
-	} else {
-		assert(
-			result != NULL &&
-			(result->low_key == key || result->high_key == key)
-		);
+		return;
 	}
+	
+	assert(
+		result != NULL &&
+		(result->low_key == key || result->high_key == key)
+	);
 
 	free(result);
 	__END_NODE_TEST__;
@@ -177,14 +178,15 @@ static struct _node *_insert_test(struct _node *node, int key)
 			.isfull = false,
 			.low_key = key
 		}));
-	} else {
-		search_res = search(node, key);
-		assert(
-			search_res != NULL &&
-			(search_res->low_key == key ||
-			search_res->high_key == key)
-		);
+		return;
 	}
+	 
+	search_res = search(node, key);
+	assert(
+		search_res != NULL &&
+		(search_res->low_key == key ||
+		search_res->high_key == key)
+	);
 
 	free(node_copy);
 	free(search_res);
