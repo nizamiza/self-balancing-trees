@@ -1,4 +1,5 @@
 - [About](#about)
+	- [Compilation](#compilation)
 - [AVL tree](#avl-tree)
 	- [Introduction](#introduction)
 	- [Implementation](#implementation)
@@ -17,6 +18,54 @@
 This is part of the university project at FIIT STU, Bratislava, Slovakia. Goal is to compare different self-balancing trees to each other, as well as to the regular Binary Search Tree.
 
 This project comes with a small interaction program - `treeio`. It can be used to manually insert and search nodes, as well as *pretty print* the whole tree.
+
+## Compilation
+
+Project contains a `Makefile` to compile `treeio` program. Default setting is to compile it with AVL tree, but you can change this behavior:
+
+* You can manually specify default behavior in Makefile.
+* You can pass `target=[tree_name]` argument to `make` command.
+
+If you want to compile program with different tree, then you also need to change `#include` statement inside `treeio.c` to match tree that you want to compile. E.g., if you want to compile 2-3 tree, then you would include `2_3tree.h` header and run:
+
+```
+$ make target=2_3tree
+```
+
+|Tree type|Target name|
+|---------|-----------|
+|BST      | `bst`     |
+|AVL      | `avltree` |
+|2-3      | `2_3tree` |
+|Red-black| `rbtree`  |
+
+Target names are folder names that contain source files of the given tree.
+
+If you wish to run unit tests, you can add scenarios inside *assert* file of the tree and include its header in `treeio.c`. You will also be required to pass additional argument to `make` command in shell.
+
+For example, if you've included `avltree_assert.h` header into `treeio.c` and wish to run tests. Then you can add function call inside `main`:
+
+```c
+/* treeio.c */
+
+int main(void)
+{
+	run_internal_tests();
+	...
+}
+```
+
+This will run scenarios specified in assert file.
+
+To compile program with tests enabled, you can run shell command:
+
+```
+$ make assert=true  
+```
+
+<div style="padding: 1rem; background-color: antiquewhite; color: black; font-weight: 500; border-radius: 3px">
+	Please note, that currently there are not many test scenarios inside assert files and they do not cover implementations fully.
+</div>
 
 # AVL tree
 ## Introduction
@@ -393,7 +442,7 @@ This implementation was taken from [www.programiz.com][4] and it serves only for
 
 * global variable `root` was removed;
 * `insertion` function was renamed to `insert`, and was tweaked to work without global variable;
-* `deletion` function was renamed to `delete` and tweaked to work without global variable (*although it's never used*);
+* `deletion` function was renamed to `delete` and tweaked to work without global variable (*although this function iss never used*);
 * additional `search` function was implemented;
 * additional `print_node` function was implemented;
 * additional `print` function was implemented.
