@@ -1,3 +1,4 @@
+- [About](#about)
 - [AVL tree](#avl-tree)
 	- [Introduction](#introduction)
 	- [Implementation](#implementation)
@@ -11,6 +12,11 @@
 - [Testing](#testing)
 - [References](#references)
    
+# About
+
+This is part of the university project at FIIT STU, Bratislava, Slovakia. Goal is to compare different self-balancing trees to each other, as well as to the regular Binary Search Tree.
+
+This project comes with a small interaction program - `treeio`. It can be used to manually insert and search nodes, as well as *pretty print* the whole tree.
 
 # AVL tree
 ## Introduction
@@ -407,6 +413,7 @@ All three implementations were tested for time efficiency during insertion and s
 
 | Tree type | Average insertion time | Average search time | Node size |
 |-----------|------------------------|---------------------|-----------|
+| BST       | ~0.000060s             | ~0.000002s          | 24 bytes  |
 | AVL       | ~0.000160s             | ~0.000001s          | 24 bytes  |
 | 2-3       | ~0.000050s             | ~0.000001s          | 48 bytes  |
 | Red-black | ~0.000052s             | ~0.000002s          | 24 bytes  |
@@ -417,7 +424,7 @@ As we can see, the *fastest insertions* were in *2-3 and Red-black trees*, altho
 
 # Testing
 
-Nearly each function of the implementations was tested with unit tests (except for the Red-black tree). Test functions including some test scenarios can be found in the same directory of the source code of the implementation. I.e., tests for the 2-3 tree implementation, are located in `2_3tree/2_3tree_assert.c`.
+Nearly each function of the implementations was tested with unit tests (except for the Red-black tree and the regular BST). Test functions including some test scenarios can be found in the same directory of the source code of the implementation. I.e., tests for the 2-3 tree implementation, are located in `2_3tree/2_3tree_assert.c`.
 
 # References
 

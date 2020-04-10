@@ -4,6 +4,9 @@
 
 static inline struct _node *_copy_node(struct _node *node)
 {
+	if (!node)
+		return NULL;
+		
 	struct _node *copy = _node(node->key);
 
 	copy->left = node->left;
@@ -64,9 +67,8 @@ static void _search_test(struct _node *node, int key)
 		assert(result == NULL);
 	} else {
 		assert(result != NULL && result->key == key);
+		free(result);
 	}
-	
-	free(result);
 }
 
 static void _insert_test(struct _node *node, int key)
@@ -77,8 +79,10 @@ static void _insert_test(struct _node *node, int key)
 	node = insert(node, key);
 	assert(node != NULL);
 
-	if (node_copy == NULL)
+	if (node_copy == NULL) {
 		assert(node->key == key);
+		return;
+	}
 
 	search_res = search(node, key);
 	assert(search_res != NULL && search_res->key == key);

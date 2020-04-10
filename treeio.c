@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "include/treeio.h"
-#include "include/rbtree.h"
+#include "include/2_3tree.h"
 
 #define DATA_PATH "data/randnumbers"
 #define OUT_PATH "data/timestamps"
