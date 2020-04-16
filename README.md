@@ -15,18 +15,25 @@
    
 # About
 
-This is part of the university project at FIIT STU, Bratislava, Slovakia. Goal is to compare different self-balancing trees to each other, as well as to the regular Binary Search Tree.
+This is part of the university project at FIIT STU, Bratislava, Slovakia. Goal
+is to compare different self-balancing trees to each other, as well as to the
+regular Binary Search Tree.
 
-This project comes with a small interaction program - `treeio`. It can be used to manually insert and search nodes, as well as *pretty print* the whole tree.
+This project comes with a small interaction program - `treeio`. It can be used
+to manually insert and search nodes, as well as *pretty print* the whole tree.
 
 ## Compilation
 
-Project contains a `Makefile` to compile `treeio` program. Default setting is to compile it with AVL tree, but you can change this behavior:
+Project contains a `Makefile` to compile `treeio` program. Default setting is
+to compile it with AVL tree, but you can change this behavior:
 
 * You can manually specify default behavior in Makefile.
 * You can pass `target=[tree_name]` argument to `make` command.
 
-If you want to compile program with different tree, then you also need to change `#include` statement inside `treeio.c` to match tree that you want to compile. E.g., if you want to compile 2-3 tree, then you would include `2_3tree.h` header and run:
+If you want to compile program with different tree, then you also need to
+change `#include` statement inside `treeio.c` to match tree that you want to
+compile. E.g., if you want to compile 2-3 tree, then you would include
+`2_3tree.h` header and run:
 
 ```
 $ make target=2_3tree
@@ -41,9 +48,12 @@ $ make target=2_3tree
 
 Target names are folder names that contain source files of the given tree.
 
-If you wish to run unit tests, you can add scenarios inside *assert* file of the tree and include its header in `treeio.c`. You will also be required to pass additional argument to `make` command in shell.
+If you wish to run unit tests, you can add scenarios inside *assert* file of
+the tree and include its header in `treeio.c`. You will also be required to
+pass additional argument to `make` command in shell.
 
-For example, if you've included `avltree_assert.h` header into `treeio.c` and wish to run tests. Then you can add function call inside `main`:
+For example, if you've included `avltree_assert.h` header into `treeio.c` and
+wish to run tests. Then you can add function call inside `main`:
 
 ```c
 /* treeio.c */
@@ -64,27 +74,38 @@ $ make assert=true
 ```
 
 <div style="padding: 1rem; background-color: antiquewhite; color: black; font-weight: 500; border-radius: 3px">
-	Please note, that currently there are not many test scenarios inside assert files and they do not cover implementations fully.
+	Please note, that currently there are not many test scenarios inside assert
+	files and they do not cover implementations fully.
 </div>
 
 # AVL tree
 ## Introduction
 
-AVL tree, where AVL stands for its creators - *Adelson-Velsky and Landis*, is a self balancing binary search tree. It is was the first such tree to be invented.
+AVL tree, where AVL stands for its creators - *Adelson-Velsky and Landis*, is
+a self balancing binary search tree. It is was the first such tree to be invented.
 
-AVL tree has `O(logn)` time complexity for its operations. It is often compared to *red-black* tree due to them both being height balanced.
+AVL tree has `O(logn)` time complexity for its operations. It is often compared
+to *red-black* tree due to them both being height balanced.
 
-Each node in AVL tree has a *balance factor*, which is calculated by substracting the height of the left subtree from the height of the right subtree. I.e.:
+Each node in AVL tree has a *balance factor*, which is calculated by substracting
+the height of the left subtree from the height of the right subtree. I.e.:
 
 `B(N) = H(R(N)) - H(L(N))`,
 
-where `B(N)` is balance factor of the node `N`, `R(N)` is the right subtree of the node `N`, `L(N)` is the left subtree of the node `N`, and `H(T)` is a function to calculate height of the subtree `T`.
+where `B(N)` is balance factor of the node `N`, `R(N)` is the right subtree of
+the node `N`, `L(N)` is the left subtree of the node `N`, and `H(T)` is a
+function to calculate height of the subtree `T`.
 
-Binary search tree is defined as an AVL tree, if and only if, each node of the tree has balance factor of **0**, **1**, or **-1**. Node `N` with balance factor of **-1** is *left heavy*, node `N` with balance factor of **1** is *right heavy*, node `N` with balance factor of **0** is *balanced*.
+Binary search tree is defined as an AVL tree, if and only if, each node of the
+tree has balance factor of **0**, **1**, or **-1**. Node `N` with balance factor
+of **-1** is *left heavy*, node `N` with balance factor of **1** is *right
+heavy*, node `N` with balance factor of **0** is *balanced*.
 
 ## Implementation
 
-This implementation is based on [wikipedia article][0] as well as [geeksforgeeks article][1] about AVL tree. This implementation includes only *search* and *insert* operations.
+This implementation is based on [wikipedia article][0] as well as
+[geeksforgeeks article][1] about AVL tree. This implementation includes only
+*search* and *insert* operations.
 
 For each node we can define a structure:
 
@@ -99,13 +120,20 @@ struct _node {
 
 where `bfactor` stands for the *balance factor*.
 
-Search routine is the same as for the regular Binary Search Tree, so we will skip it and go right to the insertion.
+Search routine is the same as for the regular Binary Search Tree, so we will
+skip it and go right to the insertion.
 
-Insertion operation of the AVL tree is similar to one of regular binary search tree. Simple recursive traversal will do the trick. Important bit comes after the fact of insertion, which is the rebalancing of tree.
+Insertion operation of the AVL tree is similar to one of regular binary search
+tree. Simple recursive traversal will do the trick. Important bit comes after
+the fact of insertion, which is the rebalancing of tree.
 
-Each time we insert a new node, we calculate balance factor of that node, and if it is not **-1**, **0**, or **1**, then we need to rebalance our tree. This can be done with node rotation operations, such as *left rotation*, and *right rotation*.
+Each time we insert a new node, we calculate balance factor of that node, and
+if it is not **-1**, **0**, or **1**, then we need to rebalance our tree. This
+can be done with node rotation operations, such as *left rotation*, and
+*right rotation*.
 
-To left rotate node is to set its *right subtree* to *left subtree of its right subtree*, and set itself as the *left subtree* of its *right subtree*. I.e.:
+To left rotate node is to set its *right subtree* to *left subtree of its
+right subtree*, and set itself as the *left subtree* of its *right subtree*. I.e.:
 
 ```c
 struct _node *rotate_left(struct _node *node)
@@ -120,7 +148,10 @@ struct _node *rotate_left(struct _node *node)
 }
 ```
 
-Right rotation is the same process as the left rotation, but instead of setting *right subtree* of the node, we set its *left subtree* to right subtree of its *left subtree*. And after that, similar to the left rotation, we set the node itself as the *right subtree* of its *left subtree*. I.e.:
+Right rotation is the same process as the left rotation, but instead of setting
+*right subtree* of the node, we set its *left subtree* to right subtree of its
+*left subtree*. And after that, similar to the left rotation, we set the node
+itself as the *right subtree* of its *left subtree*. I.e.:
 
 ```c
 struct _node *rotate_right(struct _node *node)
@@ -174,28 +205,44 @@ struct _node *rebalance(struct _node *node, long key)
 # 2-3 tree
 ## Introduction
 
-2-3 tree is a self-balancing search tree, where each node (often referred to as the internal node) has either *2 children* and *1 key* or *three children* and *2 keys*.
+2-3 tree is a self-balancing search tree, where each node (often referred to
+as the internal node) has either *2 children* and *1 key* or *three children*
+and *2 keys*.
 
-Leaves of 2-3 tree are always on the level, meaning that tree is always balanced. [Traversal algorithm][2] of 2-3 tree goes as follows:
+Leaves of 2-3 tree are always on the level, meaning that tree is always balanced.
+[Traversal algorithm][2] of 2-3 tree goes as follows:
 
-1. Let `T` be a 2–3 tree and `d` be the data element we want to find. If `T` is empty, then `d` is not in `T` and we're done.
+1. Let `T` be a 2–3 tree and `d` be the data element we want to find. If `T` is
+	empty, then `d` is not in `T` and we're done.
 2. Let `r` be the root of `T`.
-3. Suppose `r` is a leaf. If `d` is not in `r`, then `d` is not in `T`. Otherwise, `d` is in `T`. In particular, `d` can be found at a leaf node. We need no further steps and we're done.
-4. Suppose `r` is a 2-node with left child `L` and right child `R`. Let e be the data element in `r`. There are three cases:
+3. Suppose `r` is a leaf. If `d` is not in `r`, then `d` is not in `T`.
+	Otherwise, `d` is in `T`. In particular, `d` can be found at a leaf node.
+	We need no further steps and we're done.
+4. Suppose `r` is a 2-node with left child `L` and right child `R`. Let e be the
+	data element in `r`. There are three cases:
 	* If `d` is equal to e, then we've found `d` in `T` and we're done.
-	* If `d < e`, then set `T` to `L`, which by definition is a 2–3 tree, and go back to step 2.
+	* If `d < e`, then set `T` to `L`, which by definition is a 2–3 tree, and
+		go back to step 2.
 	* If `d > e`, then set `T` to `R` and go back to step 2.
-5. Suppose `r` is a 3-node with left child `L`, middle child `M`, and right child `R`. Let `a` and `b` be the two data elements of `r`, where `a < b`. There are four cases:
+5. Suppose `r` is a 3-node with left child `L`, middle child `M`, and right
+	child `R`. Let `a` and `b` be the two data elements of `r`, where `a < b`.
+	There are four cases:
 	* If `d` is equal to `a` or `b`, then `d` is in `T` and we're done.
 	* If `d < a`, then set `T` to `L` and go back to step 2.
 	* If `a < d < b`, then set `T` to `M` and go back to step 2.
 	* If `d > b`, then set `T` to `R` and go back to step 2.
 
-To insert a new node to the tree, we search for the correct position for the node with traversal algorithm and insert it there. If the node becomes a 4-node, then we split it into 2 nodes, promoting middle key to the parent node. This process repeats recursively until we reach the 2-node node, or the root, in which case we split the root as well, making a new one out of the middle key. 
+To insert a new node to the tree, we search for the correct position for the
+node with traversal algorithm and insert it there. If the node becomes a 4-node,
+then we split it into 2 nodes, promoting middle key to the parent node. This
+process repeats recursively until we reach the 2-node node, or the root, in
+which case we split the root as well, making a new one out of the middle key. 
 
 ## Implementation
 
-This implementation is based on [paperwork][5], which is part of the CS230 Data Structures course at the Princeton University. This implementation includes only *search* and *insert* operations.
+This implementation is based on [paperwork][5], which is part of the CS230 Data
+Structures course at the Princeton University. This implementation includes only
+*search* and *insert* operations.
 
 For each internal node we can define a structure:
 
@@ -211,7 +258,9 @@ struct _node {
 
 where `isfull` indicates whether node is 3-node (*has 2 keys and 3 children*).
 
-Search routine for the 2-3 tree is similar to the regular BST, only difference being that we have an extra condition for the recursive call when the node is a 3-node, and search value is between keys of the node. I.e.:
+Search routine for the 2-3 tree is similar to the regular BST, only difference
+being that we have an extra condition for the recursive call when the node is
+a 3-node, and search value is between keys of the node. I.e.:
 
 ```c
 struct _node *search(struct _node *node, int key)
@@ -232,7 +281,9 @@ struct _node *search(struct _node *node, int key)
 }
 ```
 
-Insertion is the most complex part of this implementation. Steps are the same as described in the *Introduction*. After traversing the tree and finding a spot for the new node, we insert the key:
+Insertion is the most complex part of this implementation. Steps are the same
+as described in the *Introduction*. After traversing the tree and finding a spot
+for the new node, we insert the key:
 
 ```c
 struct _node *_insert_key(struct _node *node, int key)
@@ -247,7 +298,11 @@ struct _node *_insert_key(struct _node *node, int key)
 }
 ```
 
-If node is not full, then we just compare new key with the existing key and insert it to the correct position. If new key is a duplicate, then we throw `EDUPNODE` (error duplicate node) and simply return unchanged node:
+If node is not full, then we just compare new key with the existing key and
+insert it to the correct position. If new key is a duplicate, then we throw
+`EDUPNODE` (error duplicate node) and simply return unchanged node:
+
+*Throw is a bit misleading, since it will only print an error message'*
 
 ```c
 struct _node *_add_key(struct _node *node, int key)
@@ -268,7 +323,11 @@ struct _node *_add_key(struct _node *node, int key)
 }
 ```
 
-But if node is full, then we are at the step **5** of our insertion algorithm, meaning we have to split our node. To do so, we sort all 3 keys (two keys of the node, and the key that is being inserted) and create **2** new nodes from the smallest and the largest keys. The middle size key gets promoted to the parent: 
+But if node is full, then we are at the step **5** of our insertion algorithm,
+meaning we have to split our node. To do so, we sort all 3 keys (two keys of
+the node, and the key that is being inserted) and create **2** new nodes from
+the smallest and the largest keys. The middle size key gets promoted to the
+parent: 
 
 ```c
 struct _node *_split(struct _node *node, int key)
@@ -305,19 +364,25 @@ struct _node *_split(struct _node *node, int key)
 }
 ```
 
-After that we need to merge our **2** new nodes with the parent node, as well as add the promoted key to its list of keys. This step can be divided into **3** scenarios:
+After that we need to merge our **2** new nodes with the parent node, as well
+as add the promoted key to its list of keys. This step can be divided into
+**3** scenarios:
 
 1. Node does not have a parent.
 2. Parent node is not full (2-node).
 3. Parent node is full (3-node).
 
-In the **first** case, we simply return a new node, which has a single key (promoted key) and two children (newly made 2 nodes).
+In the **first** case, we simply return a new node, which has a single key
+(promoted key) and two children (newly made 2 nodes).
 
-In the **second** case, we add promoted key to the parent and attach **2** new children alongside his single child.
+In the **second** case, we add promoted key to the parent and attach **2** new
+children alongside his single child.
 
-In the **third** case, we split the parent itself and promote its middle key to its parent.
+In the **third** case, we split the parent itself and promote its middle key
+to its parent.
 
-As expectedly, this process repeats recursively until we reach the first 2-node node, or the root.
+As expectedly, this process repeats recursively until we reach the first 2-node
+node, or the root.
 
 ```c
 struct _node *_merge_with_parent(struct _merge_args args)
@@ -425,24 +490,33 @@ struct _node *_merge_with_parent(struct _merge_args args)
 # Red-black tree
 ## Introduction
 
-Red-black tree is a self-balancing binary search tree, where each node is colored either [red or black][3]:
+Red-black tree is a self-balancing binary search tree, where each node is
+colored either [red or black][3]:
 
 * Root of the red-black tree is always black.
 * Each leaf is colored black.
 * If node is red, then both of its children are black.
-* Every path from a given node to any of its descendant NIL nodes goes through the same number of black nodes.
+* Every path from a given node to any of its descendant NIL nodes goes through
+	the same number of black nodes.
 
 Like AVL tree, Red-black tree is height balanced. The balancing rule is:
 
-> The path from the root to the farthest leaf is no more than twice as long as the path from the root to the nearest leaf
+> The path from the root to the farthest leaf is no more than twice as long as
+the path from the root to the nearest leaf
 
 ## Implementation
 
-This implementation was taken from [www.programiz.com][4] and it serves only for comparison purposes. Although, several alterations to the source code had to be made. These were primarily to adapt code for the testing and comparison:
+This implementation was taken from [www.programiz.com][4] and it serves only for
+comparison purposes. Although, several alterations to the source code had to be
+made. These were primarily to adapt code for the testing and comparison.
+*Important*, these changes did not affect unerlying logic nor performance of
+the implementation:
 
 * global variable `root` was removed;
-* `insertion` function was renamed to `insert`, and was tweaked to work without global variable;
-* `deletion` function was renamed to `delete` and tweaked to work without global variable (*although this function iss never used*);
+* `insertion` function was renamed to `insert`, and was tweaked to work without
+	global variable;
+* `deletion` function was renamed to `delete` and tweaked to work without global
+	variable (*although this function iss never used*);
 * additional `search` function was implemented;
 * additional `print_node` function was implemented;
 * additional `print` function was implemented.
@@ -458,7 +532,9 @@ struct rbNode {
 
 # Comparison
 
-All three implementations were tested for time efficiency during insertion and search with set of keys listed in the `randnumbers` file in the `data` directory of the project. Results were following:
+All three implementations were tested for time efficiency during insertion and
+search with set of keys listed in the `randnumbers` file in the `data` directory
+of the project. Results were following:
 
 | Tree type | Average insertion time | Average search time | Node size |
 |-----------|------------------------|---------------------|-----------|
@@ -467,13 +543,21 @@ All three implementations were tested for time efficiency during insertion and s
 | 2-3       | ~0.000050s             | ~0.000001s          | 48 bytes  |
 | Red-black | ~0.000052s             | ~0.000002s          | 24 bytes  |
 
-As we can see, the *fastest insertions* were in *2-3 and Red-black trees*, although 2-3 tree requires twice the size of memory for each node compared to red-black or the AVL trees.
+As we can see, the *fastest insertions* were in *2-3 and Red-black trees*,
+although 2-3 tree requires twice the size of memory for each node compared to
+red-black or the AVL trees.
 
-*Slowest insertions* were in the AVL tree, but in comparison to the red-black tree, AVL has better height balance, thus look up operations are faster inside AVL tree.
+*Slowest insertions* were in the AVL tree, but in comparison to the red-black
+tree, AVL has better height balance, thus look up operations are faster inside
+AVL tree.
 
 # Testing
 
-Nearly each function of the implementations was tested with unit tests (except for the Red-black tree and the regular BST). Test functions including some test scenarios can be found in the same directory of the source code of the implementation. I.e., tests for the 2-3 tree implementation, are located in `2_3tree/2_3tree_assert.c`.
+Nearly each function of the implementations was tested with unit tests (except
+for the Red-black tree and the regular BST). Test functions including some test
+scenarios can be found in the same directory of the source code of the
+implementation. I.e., tests for the 2-3 tree implementation, are located in
+`2_3tree/2_3tree_assert.c`.
 
 # References
 
