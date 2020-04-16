@@ -266,6 +266,18 @@ struct _node *insert(struct _node *node, int key)
 	return insert(node->middle, key);
 }
 
+void clear(struct _node *node)
+{
+	if (!node)
+		return;
+
+	clear(node->left);
+	clear(node->middle);
+	clear(node->right);
+
+	free(node);
+}
+
 /* Printing logic */
 void print_node(const struct _node *node)
 {

@@ -100,6 +100,17 @@ struct _node *insert(struct _node *node, int key)
 	return _rebalance(_set_bfactor(node), key);
 }
 
+void clear(struct _node *node)
+{
+	if (!node)
+		return;
+
+	clear(node->left);
+	clear(node->right);
+
+	free(node);
+}
+
 /**
  * Printing function source: https://stackoverflow.com/a/26699993
  */
