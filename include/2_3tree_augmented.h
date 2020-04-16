@@ -47,5 +47,6 @@ extern struct _node *_get_root(struct _node *node);
 extern struct _node *_insert_key(struct _node *node, int key);
 extern struct _node *search(struct _node *node, int key);
 extern struct _node *insert(struct _node *node, int key);
+extern void clear(struct _node *node);
 
 #endif
