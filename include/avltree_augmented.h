@@ -22,6 +22,7 @@ extern struct _node *_rebalance(struct _node *node, int key);
 extern struct _node *search(struct _node *node, int key);
 extern struct _node *insert(struct _node *node, int key);
 extern const char *_bfactor_to_str(const struct _node *node);
+extern void clear(struct _node *node);
 extern void print_node(const struct _node *node);
 extern void print(const struct _node *node, int indent);
 
