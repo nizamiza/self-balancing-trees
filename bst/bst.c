@@ -1,11 +1,4 @@
-#include <stdlib.h>
-#include "../include/treeio.h"
-
-struct _node {
-	int key;
-	struct _node *left;
-	struct _node *right;
-};
+#include "../include/bst_augmented.h"
 
 struct _node *_node(int key)
 {
@@ -41,6 +34,17 @@ struct _node *insert(struct _node *node, int key)
 	}
 
 	return node;
+}
+
+void clear(struct _node *node)
+{
+	if (!node)
+		return;
+
+	clear(node->left);
+	clear(node->right);
+	
+	free(node);
 }
 
 /**

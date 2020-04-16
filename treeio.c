@@ -142,7 +142,7 @@ static inline void handle_cmd(char cmd, Node *root)
 		case 'p'	: print(*root, 0); 				break;
 		case 's'	: search_node(*root);			break;
 		case 'q'	: exit_program(EXIT_SUCCESS);	break;
-		case 'r'	: *root = NULL;					break;
+		case 'r'	: clear(root);					break;
 		case 't'	: run_file_test(root);			break;
 		case '\n'	: 								break;
 		default		: throw(UNKNOWN_CMD_ERR); 		break;
