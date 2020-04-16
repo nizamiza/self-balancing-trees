@@ -414,6 +414,17 @@ struct rbNode *search(struct rbNode *node, int data)
 	return search(node->link[1], data);
 }
 
+void clear(struct rbNode *node)
+{
+	if (!node)
+		return;
+
+	clear(node->link[0]);
+	clear(node->link[1]);
+
+	free(node);
+}
+
 /**
  * Printing function source: https://stackoverflow.com/a/26699993
  */
