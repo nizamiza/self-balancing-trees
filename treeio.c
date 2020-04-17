@@ -106,7 +106,7 @@ static inline void insert_nodes(Node *root)
 		*root = insert(*root, key);
 
 		__CALC_DELTA_TIME__;
-		__print_delta_time(stdin);
+		__print_delta_time(stdout);
 	}
 }
 
