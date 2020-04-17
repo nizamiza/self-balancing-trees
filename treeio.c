@@ -9,23 +9,23 @@
 
 #define BILLION 1000000000.0
 
-#define __INIT_DELTA_TIME__ 	\
-	double time_d;				\
+#define __INIT_DELTA_TIME__ 		\	
+	double time_d;			\
 	struct timespec start, end;	\
 
-#define __START_DELTA_TIME__				\
-	time_d = 0.0;							\
+#define __START_DELTA_TIME__			\
+	time_d = 0.0;				\
 	clock_gettime(CLOCK_REALTIME, &start);	\
 
-#define __CALC_DELTA_TIME__						\
+#define __CALC_DELTA_TIME__				\
 	clock_gettime(CLOCK_REALTIME, &end);		\
 	time_d = ((end).tv_sec - (start).tv_sec) + 	\
-		((end).tv_nsec - (start).tv_nsec) 		\
+		((end).tv_nsec - (start).tv_nsec) 	\
 			/ BILLION
 
 #define DELTA_TIME_FORMAT ">> %s: %lf seconds --\n"
 
-#define __print_delta_time(stream)							\
+#define __print_delta_time(stream)				\
 	fprintf((stream), DELTA_TIME_FORMAT, __func__, time_d);	\
 
 
@@ -125,7 +125,7 @@ static inline void search_node(Node root)
 	Node node = search(root, key);
 	
 	__CALC_DELTA_TIME__;
-	__print_delta_time(stdin);
+	__print_delta_time(stdout);
 
 	if (node) {
 		print_node(node);
