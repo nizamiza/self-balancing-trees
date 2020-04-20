@@ -18,13 +18,16 @@ ifeq ($(assert), true)
 	objs += $(addprefix $(objdir)/, $(target)$(assert_suf).o)
 endif
 
-$(outdir)/treeio: $(objs)
+$(outdir)/treeio: $(objs) | $(outdir)
 	cc $(flags) $^ -o $@
 
 $(objs): | $(objdir)
 
 $(objdir):
 	mkdir $(objdir)
+
+$(outdir):
+	mkdir $(outdir)
 
 $(objdir)/treeio.o: treeio.c treeio.h
 	cc $(flags) -c $< -o $@
@@ -38,7 +41,7 @@ $(objdir)/$(target)$(assert_suf).o: $(objdir)/$(target).o $(target)/$(target)$(a
 .PHONY: clean
 clean:
 	rm -f -r $(objdir)
-	rm -f $(outdir)/treeio
+	rm -f -r $(outdir)
 
 print: *.c
 	lpr -p $?

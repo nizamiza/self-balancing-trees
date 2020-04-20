@@ -2,30 +2,30 @@
 #include <stdbool.h>
 #include <time.h>
 #include "include/treeio.h"
-#include "include/2_3tree.h"
+#include "include/avltree.h"
 
 #define DATA_PATH "data/randnumbers"
 #define OUT_PATH "data/timestamps"
 
 #define BILLION 1000000000.0
 
-#define __INIT_DELTA_TIME__ 		\	
-	double time_d;			\
-	struct timespec start, end;	\
+#define __INIT_DELTA_TIME__ 					\
+	double time_d;								\
+	struct timespec start, end;					\
 
-#define __START_DELTA_TIME__			\
-	time_d = 0.0;				\
-	clock_gettime(CLOCK_REALTIME, &start);	\
+#define __START_DELTA_TIME__					\
+	time_d = 0.0;								\
+	clock_gettime(CLOCK_REALTIME, &start);		\
 
-#define __CALC_DELTA_TIME__				\
+#define __CALC_DELTA_TIME__						\
 	clock_gettime(CLOCK_REALTIME, &end);		\
 	time_d = ((end).tv_sec - (start).tv_sec) + 	\
-		((end).tv_nsec - (start).tv_nsec) 	\
+		((end).tv_nsec - (start).tv_nsec) 		\
 			/ BILLION
 
 #define DELTA_TIME_FORMAT ">> %s: %lf seconds --\n"
 
-#define __print_delta_time(stream)				\
+#define __print_delta_time(stream)							\
 	fprintf((stream), DELTA_TIME_FORMAT, __func__, time_d);	\
 
 
